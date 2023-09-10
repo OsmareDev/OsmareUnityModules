@@ -5,7 +5,7 @@ using UnityEngine.InputSystem;
 
 public class PlayerController : MonoBehaviour
 {
-    [SerializeField] private APlayerInput m_playerInput;
+    [SerializeField] private AInputManager m_playerInput;
     [SerializeField, SerializeReference] private General2DCollisionController m_cc;
     [SerializeField] private float m_velocity = 5f;
 
@@ -23,7 +23,7 @@ public class PlayerController : MonoBehaviour
     }
 
     private void GatherInput() {
-        m_movementDirection = m_playerInput.GetDirection();
+        m_movementDirection = m_playerInput.GetMoveDirection();
     }
 
     private void CheckCameraControl() {
