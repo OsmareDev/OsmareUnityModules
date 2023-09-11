@@ -1,4 +1,5 @@
 using System;
+using UnityEngine;
 
 public class Helpers
 {
@@ -7,4 +8,12 @@ public class Helpers
         if (!Enum.IsDefined(typeof(T), nextValue)) nextValue = 0;
         return (T)(object)nextValue;
     } 
+
+    private static Camera m_camera;
+    public static Camera CameraMain {
+        get {
+            if (m_camera == null) m_camera = Camera.main;
+            return m_camera;
+        }
+    }
 }

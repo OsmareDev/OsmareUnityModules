@@ -1,8 +1,6 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
-using System;
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -21,7 +19,7 @@ public class TopDownAimController : MonoBehaviour
     [SerializeField] private bool m_takeWallsIntoAccount = false;
     [SerializeField] private LayerMask m_wallLayer;
     
-    [SerializeField] private AInputManager m_playerInput;
+    [SerializeField] private Object m_playerInput; //IInputManager
     
     [SerializeField] private Transform m_rotationCenter;
     [SerializeField] private float m_rotationVelocity = 500f;
@@ -42,9 +40,9 @@ public class TopDownAimController : MonoBehaviour
     public void NextShootType() => AimType = Helpers.GetNextInEnum<AimTypeEnum>((int)AimType);
 
     private void GatherInput() {
-        m_moveDirection = (m_playerInput)? m_playerInput.GetMoveDirection() : default(Vector2);
-        m_lookDirection = (m_playerInput)? m_playerInput.GetLookDirection() : default(Vector2);
-        if (m_playerInput && m_playerInput.JumpedThisFrame()) NextShootType();
+        m_moveDirection = (m_playerInput)? ((IInputManager)m_playerInput).GetMoveDirection() : default(Vector2);
+        m_lookDirection = (m_playerInput)? ((IInputManager)m_playerInput).GetLookDirection() : default(Vector2);
+        if (m_playerInput && ((IInputManager)m_playerInput).JumpedThisFrame()) NextShootType();
     }
     #endregion
 
@@ -52,7 +50,7 @@ public class TopDownAimController : MonoBehaviour
     private Collider2D GetClosestEnemyInRange() {
         List<Collider2D> enemies = new List<Collider2D>(Physics2D.OverlapCircleAll(m_rotationCenter.position, m_maxDistanceToDetect, m_enemyLayer));
         Collider2D closest = enemies
-            .Where( enemy => !Physics2D.Raycast(m_rotationCenter.position, (enemy.transform.position - m_rotationCenter.position).normalized, (enemy.transform.position - m_rotationCenter.position).magnitude, m_wallLayer))
+            .Where( enemy => (!m_takeWallsIntoAccount) || !Physics2D.Raycast(m_rotationCenter.position, (enemy.transform.position - m_rotationCenter.position).normalized, (enemy.transform.position - m_rotationCenter.position).magnitude, m_wallLayer))
             .OrderBy( enemy => Vector2.Distance(enemy.transform.position, m_rotationCenter.position))
             .FirstOrDefault();
         return closest;
@@ -65,7 +63,7 @@ public class TopDownAimController : MonoBehaviour
         Vector2 directionToAimFor = (m_moveDirection != Vector2.zero) ? m_moveDirection : m_lastDirection;
         switch(AimType) {
             case AimTypeEnum.FreeAim:
-            if (Input.mousePresent) directionToAimFor = (Camera.main.ScreenToWorldPoint(Input.mousePosition) - transform.parent.position).normalized;
+            if (Input.mousePresent) directionToAimFor = (Helpers.CameraMain.ScreenToWorldPoint(Input.mousePosition) - m_rotationCenter.position).normalized;
             if (m_lookDirection != Vector2.zero) directionToAimFor = m_lookDirection;
             break;
 
@@ -111,7 +109,7 @@ class TopDownAimControllerEditor : Editor {
         TopDownAimController script = (TopDownAimController)target;
         serializedObject.Update();
 
-        EditorGUILayout.PropertyField(m_playerInput, true);
+        EditorHelpers.CollectInterface<IInputManager>(ref m_playerInput, "Input Manager ");
         if (m_playerInput.objectReferenceValue == null) EditorGUILayout.HelpBox("if there is no playerInput only the free aim mode with mouse will work", MessageType.Warning);
 
         script.AimType = (TopDownAimController.AimTypeEnum)EditorGUILayout.EnumPopup("Aim Type :", script.AimType);

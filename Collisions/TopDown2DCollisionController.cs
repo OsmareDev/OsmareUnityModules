@@ -7,7 +7,7 @@ using System;
 using UnityEditor;
 #endif
 
-public class General2DCollisionController : MonoBehaviour, IMoveable
+public class TopDown2DCollisionController : MonoBehaviour, IMoveable
 {
     // Debug Settings
     [SerializeField] private bool m_showRays;
@@ -21,10 +21,6 @@ public class General2DCollisionController : MonoBehaviour, IMoveable
     [SerializeField] private LayerMask m_collisionLayer;
     [SerializeField] private int m_maxIterations = 3;
     [Range(0f, 1f)][SerializeField] private float m_alignmentToSlide = 0.96f;
-
-    // Gravity Settings
-    [field: SerializeField] public bool TakeIntoAccountGravity { get; set; } = false;
-    [field: SerializeField] public Transform BodyAxis { get; set; }
 
     public void Start() => LoadCollisionDetection();
 
@@ -85,19 +81,18 @@ public class General2DCollisionController : MonoBehaviour, IMoveable
     RaycastHit2D CircleCollision(Vector2 acumulatedPosition, Vector2 direction, float rayLenght) => Physics2D.CircleCast(m_collider.bounds.center + (Vector3)acumulatedPosition, ((CircleCollider2D)m_collider).radius, direction, rayLenght, m_collisionLayer);
     RaycastHit2D BoxCollision(Vector2 acumulatedPosition, Vector2 direction, float rayLenght) => Physics2D.BoxCast(m_collider.bounds.center + (Vector3)acumulatedPosition, ((BoxCollider2D)m_collider).size, transform.eulerAngles.z, direction, rayLenght, m_collisionLayer);
     RaycastHit2D CapsuleCollision(Vector2 acumulatedPosition, Vector2 direction, float rayLenght) => Physics2D.CapsuleCast(m_collider.bounds.center + (Vector3)acumulatedPosition, ((CapsuleCollider2D)m_collider).size, ((CapsuleCollider2D)m_collider).direction, transform.eulerAngles.z, direction, rayLenght, m_collisionLayer);
+
     #endregion
 }
 
 #region Editor
 #if UNITY_EDITOR
-[CustomEditor(typeof(General2DCollisionController))]
-class General2DCollisionControllerEditor : Editor {
+[CustomEditor(typeof(TopDown2DCollisionController))]
+class TopDown2DCollisionControllerEditor : Editor {
     // Debug properties
     SerializedProperty m_showRays, m_durationOfRays;
     // Collider properties
     SerializedProperty m_collider, m_skinWidth, m_collisionLayer, m_maxIterations, m_alignmentToSlide;
-    // Gravity properties
-    SerializedProperty takeIntoAccountGravity, bodyAxis;
 
     bool showDebug, showCollider, showGravity;
 
@@ -110,9 +105,6 @@ class General2DCollisionControllerEditor : Editor {
         m_collisionLayer = serializedObject.FindProperty("m_collisionLayer");
         m_maxIterations = serializedObject.FindProperty("m_maxIterations");
         m_alignmentToSlide = serializedObject.FindProperty("m_alignmentToSlide");
-
-        takeIntoAccountGravity = serializedObject.FindProperty("<TakeIntoAccountGravity>k__BackingField");
-        bodyAxis = serializedObject.FindProperty("<BodyAxis>k__BackingField");
 
         showDebug = EditorPrefs.GetBool("Editor_showDebug", true);
         showGravity = EditorPrefs.GetBool("Editor_showGravity", true);
@@ -161,28 +153,6 @@ class General2DCollisionControllerEditor : Editor {
         }
         EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
         // || Colisions Settings ||
-
-
-        // || Gravity Settings ||
-        showGravity = EditorGUILayout.Foldout(showGravity, "Gravity Settings", true, EditorStyles.foldoutHeader);
-        EditorPrefs.SetBool("Editor_showGravity", showGravity);
-        if (showGravity) {
-            EditorGUILayout.BeginHorizontal();
-            GUILayout.Label("Take Into Account Gravity", GUILayout.Width(180));
-            EditorGUILayout.PropertyField(takeIntoAccountGravity, GUIContent.none);
-            EditorGUILayout.EndHorizontal();
-
-            EditorGUI.indentLevel++;
-            if (takeIntoAccountGravity.boolValue) {
-                EditorGUILayout.PropertyField(bodyAxis, true);
-                if (bodyAxis.objectReferenceValue == null) bodyAxis.objectReferenceValue = script.transform;
-            
-            }
-            
-            EditorGUI.indentLevel--;
-        }
-        EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
-        // || Gravity Settings ||
         
 
         // || Debug Settings ||
