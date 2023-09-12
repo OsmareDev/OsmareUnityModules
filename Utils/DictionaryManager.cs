@@ -15,7 +15,6 @@ public class DictionaryManager<T1, T2>
 
     public void SweepDictionary() {
         if (m_sweepTime < Time.time) {
-            Debug.Log("limpia");
             var elementsToRemove = Dictionary.Where( element => TimeThreshold < (Time.time - element.Value.Timestamp) ).ToList();
             elementsToRemove.ForEach( element => { 
                 // TODO : make it more generic

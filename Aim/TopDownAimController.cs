@@ -10,7 +10,10 @@ public class TopDownAimController : MonoBehaviour
 {
     public enum AimTypeEnum {
         FreeAim,
-        AssistedAim
+        AssistedAim,
+        AimIn4Directions,
+        AimIn8Directions,
+        AimInNDirections
     }
     [field: SerializeField] public AimTypeEnum AimType { get; set; }
 
@@ -19,12 +22,12 @@ public class TopDownAimController : MonoBehaviour
     [SerializeField] private bool m_takeWallsIntoAccount = false;
     [SerializeField] private LayerMask m_wallLayer;
     
+    [SerializeField] private int m_numberOfDirections = 16;
+
     [SerializeField] private Object m_playerInput; //IInputManager
     
     [SerializeField] private Transform m_rotationCenter;
     [SerializeField] private float m_rotationVelocity = 500f;
-
-
 
     private Vector2 m_lookDirection, m_moveDirection, m_lastDirection;
     private bool m_shootedThisFrame;
@@ -70,11 +73,40 @@ public class TopDownAimController : MonoBehaviour
             case AimTypeEnum.AssistedAim:
             if (closest) directionToAimFor = (closest.transform.position - transform.parent.transform.position).normalized;
             break;
+
+            case AimTypeEnum.AimIn4Directions:
+            if (m_lookDirection != Vector2.zero) directionToAimFor = m_lookDirection;
+            directionToAimFor = ConvertAimInNDirection(directionToAimFor, 4);
+            break;
+
+            case AimTypeEnum.AimIn8Directions:
+            if (m_lookDirection != Vector2.zero) directionToAimFor = m_lookDirection;
+            directionToAimFor = ConvertAimInNDirection(directionToAimFor, 8);
+            break;
+
+            case AimTypeEnum.AimInNDirections:
+            if (m_lookDirection != Vector2.zero) directionToAimFor = m_lookDirection;
+            directionToAimFor = ConvertAimInNDirection(directionToAimFor, m_numberOfDirections);
+            break;
         }
         m_lastDirection = directionToAimFor;
 
         return directionToAimFor;
     } 
+
+    private Vector2 ConvertAimInNDirection(Vector2 aimDirection, int nDivisions) {
+        float angle = Vector2.SignedAngle(Vector2.up, aimDirection);
+
+        float divisionAngle = 360f/(float)nDivisions;
+        for (float i = -180f; i <= 180f; i += divisionAngle) {
+            if (angle <= i + divisionAngle/2 && angle >= i - divisionAngle/2) {
+                Debug.Log(i);
+                return Quaternion.AngleAxis(i, m_rotationCenter.forward) * m_rotationCenter.up;
+            }
+        }
+
+        return aimDirection;
+    }
 
     private void ApplyRotation(Vector2 directionToFollow) {
         float angle = (Vector2.SignedAngle(transform.localPosition.normalized, directionToFollow));
@@ -93,7 +125,7 @@ public class TopDownAimController : MonoBehaviour
 #if UNITY_EDITOR
 [CustomEditor(typeof(TopDownAimController))]
 class TopDownAimControllerEditor : Editor {
-    SerializedProperty m_enemyLayer, m_maxDistanceToDetect, m_playerInput, m_rotationCenter, m_rotationVelocity, m_takeWallsIntoAccount, m_wallLayer;
+    SerializedProperty m_enemyLayer, m_maxDistanceToDetect, m_playerInput, m_rotationCenter, m_rotationVelocity, m_takeWallsIntoAccount, m_wallLayer, m_numberOfDirections;
 
     private void OnEnable() {
         m_enemyLayer = serializedObject.FindProperty("m_enemyLayer");
@@ -103,6 +135,7 @@ class TopDownAimControllerEditor : Editor {
         m_rotationVelocity = serializedObject.FindProperty("m_rotationVelocity");
         m_takeWallsIntoAccount = serializedObject.FindProperty("m_takeWallsIntoAccount");
         m_wallLayer = serializedObject.FindProperty("m_wallLayer");
+        m_numberOfDirections = serializedObject.FindProperty("m_numberOfDirections");
     }
     
     public override void OnInspectorGUI() {
@@ -110,9 +143,14 @@ class TopDownAimControllerEditor : Editor {
         serializedObject.Update();
 
         EditorHelpers.CollectInterface<IInputManager>(ref m_playerInput, "Input Manager ");
-        if (m_playerInput.objectReferenceValue == null) EditorGUILayout.HelpBox("if there is no playerInput only the free aim mode with mouse will work", MessageType.Warning);
+        if (m_playerInput.objectReferenceValue == null) {
+            EditorGUILayout.HelpBox("if there is no playerInput only the free aim mode with mouse will work", MessageType.Warning);
+        }
 
         script.AimType = (TopDownAimController.AimTypeEnum)EditorGUILayout.EnumPopup("Aim Type :", script.AimType);
+        if (m_playerInput.objectReferenceValue == null) {
+            script.AimType = TopDownAimController.AimTypeEnum.FreeAim;
+        }
 
         if (script.AimType == TopDownAimController.AimTypeEnum.AssistedAim) {
             EditorGUI.indentLevel++;
@@ -126,6 +164,13 @@ class TopDownAimControllerEditor : Editor {
                 if (m_wallLayer.intValue == 0) EditorGUILayout.HelpBox("There is no Wall Layer selected", MessageType.Warning);
                 EditorGUI.indentLevel--;
             }
+            EditorGUI.indentLevel--;
+        }
+
+        if (script.AimType == TopDownAimController.AimTypeEnum.AimInNDirections) {
+            EditorGUI.indentLevel++;
+            EditorGUILayout.PropertyField(m_numberOfDirections, true);
+            if (m_numberOfDirections.intValue < 2) m_numberOfDirections.intValue = 2;
             EditorGUI.indentLevel--;
         }
 
