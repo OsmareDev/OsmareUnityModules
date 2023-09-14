@@ -1,12 +1,14 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System;
 using UnityEngine;
 
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
 
+//TODO : make rotation avaiable
 public class Portal : MonoBehaviour
 {
     [SerializeField] private Portal m_nextPortal;
@@ -20,7 +22,7 @@ public class Portal : MonoBehaviour
 
     [SerializeField] private LayerMask m_ignoreMask;
 
-    private static DictionaryManager<Collider2D, GameObject> m_decoyList;
+    private static TimedDictionaryManager<Collider2D, GameObject> m_decoyList;
     //TODO : make that you can change the value from the inspector
     [SerializeField] public static float timeThreshold = 0.1f;
 
@@ -39,7 +41,7 @@ public class Portal : MonoBehaviour
     }
 
     void Start() {
-        if (m_decoyList == null) m_decoyList = new DictionaryManager<Collider2D, GameObject>(timeThreshold);
+        if (m_decoyList == null) m_decoyList = new TimedDictionaryManager<Collider2D, GameObject>(timeThreshold, (Action<GameObject>)GameObject.Destroy);
     }
 
     void Update() { 

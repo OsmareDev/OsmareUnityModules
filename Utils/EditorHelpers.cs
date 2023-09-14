@@ -5,30 +5,28 @@ using UnityEngine;
 public class EditorHelpers
 {
     public static void CollectInterface<T>(ref SerializedProperty prop, string msg) {
-        prop.objectReferenceValue = EditorGUILayout.ObjectField(msg, prop.objectReferenceValue, typeof(Object), true);
+        Object obj = EditorGUILayout.ObjectField(msg, prop.objectReferenceValue, typeof(Object), true);
+        if (obj == null) { prop.objectReferenceValue = null; return; }
 
-        if (prop.objectReferenceValue is T) return;
-        else if (prop.objectReferenceValue is GameObject && ((GameObject)prop.objectReferenceValue).TryGetComponent<T>(out T component)) {
+        if (obj is T) { prop.objectReferenceValue = obj; return; }
+        else if (obj is GameObject && ((GameObject)obj).TryGetComponent<T>(out T component)) {
             prop.objectReferenceValue = (Object)(object)component;
             return;
         }
-
-        prop.objectReferenceValue = null;
     }
 
     public static void CollectAnyThingWithTheFunction(ref SerializedProperty prop, string functionName, string msg) {
-        prop.objectReferenceValue = EditorGUILayout.ObjectField(msg, prop.objectReferenceValue, typeof(Object), true);
+        Object obj = EditorGUILayout.ObjectField(msg, prop.objectReferenceValue, typeof(Object), true);
+        if (obj == null) { prop.objectReferenceValue = null; return; }
 
-        if (prop.objectReferenceValue is GameObject) {
-            Component[] components = ((GameObject)prop.objectReferenceValue).GetComponents<Component>();
+        if (obj is GameObject) {
+            Component[] components = ((GameObject)obj).GetComponents<Component>();
             foreach (Component component in components) if (CollectAndCheckMethods(component, functionName)) {
                 prop.objectReferenceValue = component;
                 return;
             }
         } 
-        else if (CollectAndCheckMethods(prop.objectReferenceValue, functionName)) return;
-
-        prop.objectReferenceValue = null;
+        else if (CollectAndCheckMethods(obj, functionName)) { prop.objectReferenceValue = obj; return; }
     }
 
     private static bool CollectAndCheckMethods(Object obj, string functionName) {
