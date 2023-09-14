@@ -71,9 +71,13 @@ public class TimedDictionaryManager<T1, T2>
             return Dictionary[index].Element;
         }
         set {
-            TimedElement<T2> element = Dictionary.GetValueOrDefault(index);
-            element.Element = value;
-            Dictionary[index] = element;
+            //TODO : make the default value of TimedElement a new TimedElement so this if can dissapear
+            if (Dictionary.TryGetValue(index, out TimedElement<T2> element)) {
+                element.Element = value;
+                Dictionary[index] = element;
+            } else {
+                Dictionary[index] = new TimedElement<T2>(value);
+            }
         }
     }
 }

@@ -21,6 +21,7 @@ public class PlayerController : MonoBehaviour
     {
         GatherInput();
         CheckCameraControl();
+        //TODO : hacer para llamar a la funcion pedida en el editor en vez de la interfaz
         ((IMoveable)m_collisionController).Move(m_movementDirection * (m_velocity * Time.deltaTime));
     }
 
