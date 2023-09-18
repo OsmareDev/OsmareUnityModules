@@ -22,32 +22,50 @@ public class Portal : MonoBehaviour
 
     [SerializeField] private LayerMask m_ignoreMask;
 
-    private static TimedDictionaryManager<Collider2D, GameObject> m_decoyList;
+    private static TimedDictionary<Collider2D, GameObject> m_decoyList;
+    private static int m_portalsCurrentlyActive = 0;
+    private bool m_thisPortalIsAlive = false;
+
     //TODO : make that you can change the value from the inspector
     [SerializeField] public static float timeThreshold = 0.1f;
 
-    class PortalConection {
-        public Portal conectedPortal;
-        public GameObject go;
-
-        public PortalConection(Portal p, GameObject go) {
-            this.conectedPortal = p;
-            this.go = go;
-        }
-
-        ~PortalConection() {
-            GameObject.Destroy(go);
-        }
+    #region UnityFunctions
+    void OnEnable() {
+        m_portalsCurrentlyActive++;
+        if (m_decoyList == null) m_decoyList = new TimedDictionary<Collider2D, GameObject>(null, (Action<GameObject>)GameObject.Destroy);
+        m_decoyList.StartSweep(timeThreshold);
+        m_thisPortalIsAlive = true;
     }
 
-    void Start() {
-        if (m_decoyList == null) m_decoyList = new TimedDictionaryManager<Collider2D, GameObject>(timeThreshold, (Action<GameObject>)GameObject.Destroy);
+    void OnDisable() {
+        m_portalsCurrentlyActive--;
+        if (m_portalsCurrentlyActive <= 0) {
+            Debug.Log("desactivamos");
+            m_decoyList.StopSweep();
+        }
+        m_thisPortalIsAlive = false;
+    }
+
+    void OnDestroy() {
+        if (!m_thisPortalIsAlive) return;
+
+        m_portalsCurrentlyActive--;
+        if (m_portalsCurrentlyActive <= 0) {
+            Debug.Log("desactivamos");
+            m_decoyList.StopSweep();
+        }
     }
 
     void Update() { 
         CheckPortal();
-        m_decoyList.SweepDictionary();
     }
+
+    private void OnDrawGizmos() {
+        float biggerRadius = (m_semiEjeHorizontal/2 > m_semiEjeVertical/2) ? m_semiEjeHorizontal/2 : m_semiEjeVertical/2;
+        Gizmos.color = Color.green;
+        Gizmos.DrawWireSphere(transform.position, biggerRadius);
+    }
+    #endregion
 
     #region PortalInterchanges
     void CheckPortal() {
@@ -62,7 +80,7 @@ public class Portal : MonoBehaviour
                     Vector2 newPos = PositionInConectedPortal(col);
                     go = Instantiate(go, newPos, go.transform.rotation);
                     DeactivateAllComponents(go);
-                    m_decoyList[col] = go;
+                    m_decoyList[col, timeThreshold] = go;
                 }
             }
         );
@@ -95,17 +113,15 @@ public class Portal : MonoBehaviour
     }
 
     private void DeactivateAllComponents(GameObject go) {
-        SpriteRenderer spriteRenderer = go.GetComponent<SpriteRenderer>();
-        RectTransform rectTransform = go.GetComponent<RectTransform>();
+        List<Type> nonDeleteableComponents = new List<Type>{
+            typeof(SpriteRenderer),
+            typeof(RectTransform),
+            typeof(Transform)
+        };
 
-        Component[] allComponents = go.GetComponents<Component>();
-        foreach (Component component in allComponents)
-        {
-            if (component != spriteRenderer && component != rectTransform)
-            {
-                Destroy(component); 
-            }
-        }
+        List<Component> allComponents = new List<Component>(go.GetComponents<Component>());
+        allComponents.Where( comp => !nonDeleteableComponents.Contains(comp.GetType()) ).ToList().ForEach( comp => Destroy(comp) );
+        //foreach (Component component in allComponents) if (!nonDeleteableComponents.Contains(component.GetType())) Destroy(component); 
     }
 
     #endregion
@@ -155,12 +171,6 @@ public class Portal : MonoBehaviour
         return corners;
     }
     #endregion
-
-    private void OnDrawGizmos() {
-        float biggerRadius = (m_semiEjeHorizontal/2 > m_semiEjeVertical/2) ? m_semiEjeHorizontal/2 : m_semiEjeVertical/2;
-        Gizmos.color = Color.green;
-        Gizmos.DrawWireSphere(transform.position, biggerRadius);
-    }
 }
 
 #region Editor

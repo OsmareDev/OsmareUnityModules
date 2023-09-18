@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -11,8 +12,10 @@ public class ShootController : MonoBehaviour
     [SerializeField] private Transform m_directionToShoot;
     [SerializeField] private AxisDirection m_axisDirection;
 
-    [SerializeField] private GameObject m_bulletPrefab;
-    [SerializeField] private Object m_inputManager; //IInputManager
+    [SerializeField] private UnityEngine.Object m_inputManager; //IInputManager
+
+    [SerializeField] private BulletManager m_bulletManager;
+    [SerializeField] private BaseBullet m_ammoType;
 
     private Vector2 m_direction;
 
@@ -50,8 +53,11 @@ public class ShootController : MonoBehaviour
     }
 
     public void Shoot() {
+        Debug.Log("dispara");
         LoadDirection();
-        // hacer logica de disparo
+        
+        BaseBullet go = m_bulletManager.GetBullet(m_ammoType);
+        go?.Shooted(transform.position, m_direction);
     }
 }
 
@@ -59,13 +65,14 @@ public class ShootController : MonoBehaviour
 #if UNITY_EDITOR
 [CustomEditor(typeof(ShootController))]
 class ShootControllerEditor : Editor {
-    SerializedProperty m_directionToShoot, m_axisDirection, m_bulletPrefab, m_inputManager;
+    SerializedProperty m_directionToShoot, m_axisDirection, m_bulletManager, m_inputManager, m_ammoType;
 
     private void OnEnable() {
         m_axisDirection = serializedObject.FindProperty("m_axisDirection");
         m_directionToShoot = serializedObject.FindProperty("m_directionToShoot");
-        m_bulletPrefab = serializedObject.FindProperty("m_bulletPrefab");
         m_inputManager = serializedObject.FindProperty("m_inputManager");
+        m_bulletManager = serializedObject.FindProperty("m_bulletManager");
+        m_ammoType = serializedObject.FindProperty("m_ammoType");
     }
 
     public override void OnInspectorGUI() {
@@ -77,8 +84,9 @@ class ShootControllerEditor : Editor {
         
         EditorGUILayout.PropertyField(m_axisDirection, true);
         
-        EditorGUILayout.PropertyField(m_bulletPrefab, true);
         EditorHelpers.CollectInterface<IInputManager>(ref m_inputManager, "Input Manager ");
+        EditorGUILayout.PropertyField(m_bulletManager, true);
+        EditorGUILayout.PropertyField(m_ammoType, true);
 
         serializedObject.ApplyModifiedProperties();
     }

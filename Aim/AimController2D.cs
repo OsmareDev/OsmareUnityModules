@@ -6,7 +6,7 @@ using System.Linq;
 using UnityEditor;
 #endif
 
-public class TopDownAimController : MonoBehaviour
+public class AimController2D : MonoBehaviour
 {
     public enum AimTypeEnum {
         FreeAim,
@@ -100,7 +100,6 @@ public class TopDownAimController : MonoBehaviour
         float divisionAngle = 360f/(float)nDivisions;
         for (float i = -180f; i <= 180f; i += divisionAngle) {
             if (angle <= i + divisionAngle/2 && angle >= i - divisionAngle/2) {
-                Debug.Log(i);
                 return Quaternion.AngleAxis(i, m_rotationCenter.forward) * m_rotationCenter.up;
             }
         }
@@ -110,7 +109,7 @@ public class TopDownAimController : MonoBehaviour
 
     private void ApplyRotation(Vector2 directionToFollow) {
         float angle = (Vector2.SignedAngle(transform.localPosition.normalized, directionToFollow));
-        angle = Mathf.MoveTowardsAngle(0, angle, m_rotationVelocity * Time.deltaTime);
+        if (m_rotationVelocity > 0) angle = Mathf.MoveTowardsAngle(0, angle, m_rotationVelocity * Time.deltaTime);
         transform.RotateAround(transform.parent.transform.position, transform.forward, angle);
     }
     #endregion
@@ -123,8 +122,8 @@ public class TopDownAimController : MonoBehaviour
 
 #region Editor
 #if UNITY_EDITOR
-[CustomEditor(typeof(TopDownAimController))]
-class TopDownAimControllerEditor : Editor {
+[CustomEditor(typeof(AimController2D))]
+class AimController2DEditor : Editor {
     SerializedProperty m_enemyLayer, m_maxDistanceToDetect, m_playerInput, m_rotationCenter, m_rotationVelocity, m_takeWallsIntoAccount, m_wallLayer, m_numberOfDirections;
 
     private void OnEnable() {
@@ -139,7 +138,7 @@ class TopDownAimControllerEditor : Editor {
     }
     
     public override void OnInspectorGUI() {
-        TopDownAimController script = (TopDownAimController)target;
+        AimController2D script = (AimController2D)target;
         serializedObject.Update();
 
         EditorHelpers.CollectInterface<IInputManager>(ref m_playerInput, "Input Manager ");
@@ -147,12 +146,12 @@ class TopDownAimControllerEditor : Editor {
             EditorGUILayout.HelpBox("if there is no playerInput only the free aim mode with mouse will work", MessageType.Warning);
         }
 
-        script.AimType = (TopDownAimController.AimTypeEnum)EditorGUILayout.EnumPopup("Aim Type :", script.AimType);
+        script.AimType = (AimController2D.AimTypeEnum)EditorGUILayout.EnumPopup("Aim Type :", script.AimType);
         if (m_playerInput.objectReferenceValue == null) {
-            script.AimType = TopDownAimController.AimTypeEnum.FreeAim;
+            script.AimType = AimController2D.AimTypeEnum.FreeAim;
         }
 
-        if (script.AimType == TopDownAimController.AimTypeEnum.AssistedAim) {
+        if (script.AimType == AimController2D.AimTypeEnum.AssistedAim) {
             EditorGUI.indentLevel++;
             EditorGUILayout.PropertyField(m_enemyLayer, true);
             if (m_enemyLayer.intValue == 0) EditorGUILayout.HelpBox("There is no Enemy Layer selected", MessageType.Warning);
@@ -167,7 +166,7 @@ class TopDownAimControllerEditor : Editor {
             EditorGUI.indentLevel--;
         }
 
-        if (script.AimType == TopDownAimController.AimTypeEnum.AimInNDirections) {
+        if (script.AimType == AimController2D.AimTypeEnum.AimInNDirections) {
             EditorGUI.indentLevel++;
             EditorGUILayout.PropertyField(m_numberOfDirections, true);
             if (m_numberOfDirections.intValue < 2) m_numberOfDirections.intValue = 2;
@@ -177,6 +176,11 @@ class TopDownAimControllerEditor : Editor {
         EditorGUILayout.PropertyField(m_rotationCenter, true);
         if (m_rotationCenter.objectReferenceValue == null) m_rotationCenter.objectReferenceValue = script.transform;
         EditorGUILayout.PropertyField(m_rotationVelocity, true);
+        if (m_rotationVelocity.floatValue <= 0) {
+            m_rotationVelocity.floatValue = 0;
+            EditorGUILayout.HelpBox("At 0 speed the movement will be instantaneous, if you want to lock the rotation...", MessageType.Warning);
+        }
+        
 
         if (GUI.changed) EditorUtility.SetDirty(target);
         serializedObject.ApplyModifiedProperties();
