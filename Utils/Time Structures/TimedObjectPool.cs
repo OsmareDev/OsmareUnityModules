@@ -26,18 +26,18 @@ public class TimedObjectPool<T> where T : MonoBehaviour, ILiveTime {
         m_inactivePool.StopSweep();
     }
 
-    public T2 GetElement<T2>(T2 prefab) where T2 : T {
+    public T2 GetElement<T2>(T2 prefab, float timeToLive) where T2 : T {
         if (m_activePool.Dictionary.Count >= m_maxNumberOfelements) return null;
         
         TimedElement<T> obj = m_inactivePool.List.FirstOrDefault( item => item.Element.GetType() == prefab.GetType() );
         if (obj != null) {
             m_inactivePool.List.Remove(obj);
-            m_activePool[obj.Element, obj.Element.TimeToLive, false] = obj.Element.TimesAlive;
+            m_activePool[obj.Element, timeToLive, false] = obj.Element.TimesAlive;
             obj.Element.gameObject.SetActive(true);
             return (T2)obj.Element;
         } else {
             T2 newObj = Object.Instantiate(prefab);
-            m_activePool[newObj, newObj.TimeToLive, false] = newObj.TimesAlive;
+            m_activePool[newObj, timeToLive, false] = newObj.TimesAlive;
             return newObj;
         }
     }   

@@ -18,8 +18,6 @@ public class TimedDictionary<TKey, TValue> : BaseTimedStructure
 
         m_processValueAction = processValueAction;
         m_processKeyAction = processKeyAction;
-
-        Debug.Log("se crea");
     }
     #endregion
 

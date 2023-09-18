@@ -40,7 +40,6 @@ public class Portal : MonoBehaviour
     void OnDisable() {
         m_portalsCurrentlyActive--;
         if (m_portalsCurrentlyActive <= 0) {
-            Debug.Log("desactivamos");
             m_decoyList.StopSweep();
         }
         m_thisPortalIsAlive = false;
@@ -51,7 +50,6 @@ public class Portal : MonoBehaviour
 
         m_portalsCurrentlyActive--;
         if (m_portalsCurrentlyActive <= 0) {
-            Debug.Log("desactivamos");
             m_decoyList.StopSweep();
         }
     }
@@ -114,6 +112,7 @@ public class Portal : MonoBehaviour
 
     private void DeactivateAllComponents(GameObject go) {
         List<Type> nonDeleteableComponents = new List<Type>{
+            typeof(AimController2D),
             typeof(SpriteRenderer),
             typeof(RectTransform),
             typeof(Transform)
@@ -121,7 +120,11 @@ public class Portal : MonoBehaviour
 
         List<Component> allComponents = new List<Component>(go.GetComponents<Component>());
         allComponents.Where( comp => !nonDeleteableComponents.Contains(comp.GetType()) ).ToList().ForEach( comp => Destroy(comp) );
-        //foreach (Component component in allComponents) if (!nonDeleteableComponents.Contains(component.GetType())) Destroy(component); 
+
+        // we check also all the children
+        List<GameObject> allChildren = new List<GameObject>();
+        for (int i = 0; i < go.transform.childCount; ++i) allChildren.Add(go.transform.GetChild(i).gameObject);
+        allChildren.ForEach( child => DeactivateAllComponents(child) );
     }
 
     #endregion

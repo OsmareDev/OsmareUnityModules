@@ -14,7 +14,6 @@ public abstract class BaseTimedStructure
         Application.quitting += StopSweep; // unity only
         while(m_sweepRunning) {
             m_sweepStrutureAction();
-            Debug.Log("se llama");
             await Task.Delay((int)(secondsBetweenSweeps * 1000));
         }
 

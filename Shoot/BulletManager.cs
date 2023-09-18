@@ -17,7 +17,12 @@ public class BulletManager : MonoBehaviour
         m_pool.StartSweep(0.1f);
     }
 
-    public T GetBullet<T>(T prefab) where T : BaseBullet => m_pool.GetElement(prefab);
+    public T GetBullet<T>(T prefab, float timeToLive) where T : BaseBullet {
+        T bullet = m_pool.GetElement(prefab, timeToLive);
+        if (bullet) bullet.m_deactivationFunction = ReleaseBullet;
+        return bullet;
+    }
+
     public void ReleaseBullet(BaseBullet bullet) => m_pool.TryReleaseElement(bullet);
 }
 

@@ -1,12 +1,22 @@
+using System;
+using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 
 public abstract class BaseBullet : MonoBehaviour, ILiveTime
 {
-    public abstract int ID {get; set;}
-    public abstract float TimeToLive {get; set;}
     public abstract int TimesAlive {get; set;}
+    public Action<BaseBullet> m_deactivationFunction;
 
-    public abstract void Shooted(Vector3 pos, Vector3 dir);
+    protected Vector3 m_dir;
+    protected float m_speed;
+
+    public virtual void Shooted(Vector3 pos, Vector3 dir, WeaponStats stats)
+    {
+        transform.position = pos;
+        m_dir = dir;
+        m_speed = stats.bulletSpeed;
+    }
+
+    protected virtual void Update() => transform.position += m_dir * m_speed * Time.deltaTime;
 }
