@@ -18,20 +18,21 @@ public class ShootController : MonoBehaviour
     [SerializeField] private BulletManager m_bulletManager;
     [SerializeField] private BaseBullet m_ammoType;
 
-    [SerializeField] private float m_shootAngle = 0;
-    [SerializeField] private int m_nBulletsPerShoot = 1;
-    [SerializeField] private bool m_randomPositionInRange = false;
+    // [SerializeField] private float m_shootAngle = 0;
+    // [SerializeField] private int m_nBulletsPerShoot = 1;
+    // [SerializeField] private bool m_randomPositionInRange = false;
 
     [SerializeField] private WeaponStats m_stats;
 
     private Vector2 m_direction;
+    private float m_lastBulletTime = 0;
 
     #region UnityFunctions
     public void Update() { if (((IInputManager)m_inputManager).ShootedThisFrame()) Shoot(); }
 
     private void OnDrawGizmos() {
         Gizmos.color = Color.green;
-        float beginAngle = -(m_shootAngle / 2f);
+        float beginAngle = -(m_stats.shootAngle / 2f);
 
         if (!Application.isPlaying) LoadDirection();
         Gizmos.DrawRay(transform.position, Quaternion.AngleAxis(beginAngle, -m_directionToShoot.forward) * m_direction * 2);
@@ -71,8 +72,8 @@ public class ShootController : MonoBehaviour
 
     private Vector2 CalculateDirection(float beginAngle, float distributionAngle, int iteration) {
         float finalAngle = beginAngle;
-        if (m_randomPositionInRange) {
-            finalAngle += (float)(new System.Random().NextDouble() * m_shootAngle);
+        if (m_stats.randomPositionInRange) {
+            finalAngle += (float)(new System.Random().NextDouble() * m_stats.shootAngle);
         } else {
             finalAngle += (distributionAngle/2f) + (iteration) * distributionAngle;
         }
@@ -83,12 +84,15 @@ public class ShootController : MonoBehaviour
     #endregion
 
     public void Shoot() {
+        if (m_lastBulletTime > Time.time) return;
+        m_lastBulletTime = Time.time + (1f / m_stats.fireRate);
+
         LoadDirection();
         
-        float beginAngle = -(m_shootAngle / 2f);
-        float distributedAngle = (m_shootAngle / (float)m_nBulletsPerShoot);
+        float beginAngle = -(m_stats.shootAngle / 2f);
+        float distributedAngle = (m_stats.shootAngle / (float)m_stats.nBulletsPerShoot);
 
-        for (int i = 0; i < m_nBulletsPerShoot; ++i) {
+        for (int i = 0; i < m_stats.nBulletsPerShoot; ++i) {
             Vector2 direction = CalculateDirection(beginAngle, distributedAngle, i);
 
             float timeToLive = m_stats.range / m_stats.bulletSpeed;

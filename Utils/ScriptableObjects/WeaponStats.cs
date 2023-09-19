@@ -8,4 +8,8 @@ public class WeaponStats : ScriptableObject
     public float fireRate;
     public float bulletSpeed;
     public float range;
+
+    public float shootAngle;
+    public int nBulletsPerShoot;
+    public bool randomPositionInRange;
 }
