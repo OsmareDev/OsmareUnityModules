@@ -1,0 +1,8 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public interface IPathfinding
+{
+    public void FindPath(Vector3 start, Vector3 target);
+}

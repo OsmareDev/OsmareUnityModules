@@ -1,23 +1,44 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Grid2D<T>
+[Serializable] public class Grid2D<T>
 {
     private T[,] m_grid;
-    private int m_width;
-    private int m_height;
-    private float m_cellSize;
-    private Vector3 originPosition;
-    private Vector3 OriginPosition { get {return originPosition;} set {originPosition = value;}}
+    public int NColumns {get; set;}
+    public int NRows {get; set;}
+    public float CellHeight {get; set;}
+    public float CellWidth {get; set;}
 
-    public Grid2D(int width, int height, float cellSize, Vector3 originPosition) {
-        this.m_width = width;
-        this.m_height = height;
-        this.m_cellSize = cellSize;
-        this.originPosition = originPosition;
+    // decomposed to be able to save the data in a file
+    public float OriginPositionX { get; set; }
+    public float OriginPositionY { get; set; }
+    public float OriginPositionZ { get; set; }
+    public Vector3 OriginPosition { 
+        get {return new Vector3(OriginPositionX, OriginPositionY, OriginPositionZ);} 
+        set {
+            OriginPositionX = value.x;
+            OriginPositionY = value.y;
+            OriginPositionZ = value.z;
+        } }
 
-        m_grid = new T[width, height];
+    public Grid2D(int nColumns, int nRows, Vector2 cellSize, Vector3 originPosition) {
+        this.NColumns = nColumns;
+        this.NRows = nRows;
+        this.CellWidth = cellSize.x;
+        this.CellHeight = cellSize.y;
+        this.OriginPositionX = originPosition.x;
+        this.OriginPositionY = originPosition.y;
+        this.OriginPositionZ = originPosition.z;
+
+        m_grid = new T[NColumns, NRows];
+
+        for (int i = 0; i < nColumns; ++i) {
+            for (int j = 0; j < nRows; ++j) {
+                m_grid[i, j] = Activator.CreateInstance<T>();
+            }
+        }
     }
 
     public T GetElement(int x, int y) {
@@ -30,24 +51,40 @@ public class Grid2D<T>
         else Debug.LogError("Invalid grid position.");
     }
 
-    public Vector2 WorldToGridCoordinates(Vector2 worldPosition) {
-        float percentX = (worldPosition.x - originPosition.x) / (m_width * m_cellSize);
-        float percentY = (worldPosition.y - originPosition.y) / (m_height * m_cellSize);
+    public T this[int x, int y] {
+        get { return GetElement(x, y); }
+        set { SetElement(x, y, value); }
+    }
+
+    public Vector2Int WorldToGridCoordinates(Vector2 worldPosition) {
+        float percentX = (worldPosition.x - OriginPositionX) / (NColumns * CellWidth);
+        float percentY = (worldPosition.y - OriginPositionY) / (NRows * CellHeight);
 
         percentX = Mathf.Clamp01(percentX);
         percentY = Mathf.Clamp01(percentY);
 
-        int x = Mathf.FloorToInt(percentX * m_width);
-        int y = Mathf.FloorToInt(percentY * m_height);
+        int x = Mathf.FloorToInt(percentX * NColumns);
+        int y = Mathf.FloorToInt(percentY * NRows);
 
-        return new Vector2(x, y);
+        return new Vector2Int(x, y);
+    }
+
+    public T GetElementFromWorldCoordinates(Vector3 worldPosition) {
+        Vector2Int gridCoords = WorldToGridCoordinates(worldPosition);
+        return m_grid[gridCoords.x, gridCoords.y];
     }
 
     public Vector2 GridToWorldCoordinates(Vector2 gridPosition) {
-        float worldX = originPosition.x + gridPosition.x * m_cellSize + m_cellSize / 2f;
-        float worldY = originPosition.y + gridPosition.y * m_cellSize + m_cellSize / 2f;
+        float worldX = OriginPositionX + gridPosition.x * CellWidth + CellWidth / 2f;
+        float worldY = OriginPositionY + gridPosition.y * CellHeight + CellHeight / 2f;
         return new Vector2(worldX, worldY);
     }
 
-    private bool IsValidPosition(int x, int y) => x >= 0 && x < m_width && y >= 0 && y < m_height;
+    public bool IsValidPosition(int x, int y) => x >= 0 && x < NColumns && y >= 0 && y < NRows;
+
+    public bool LoadData(string docName) => SaveSystem.Load<T[,]>(docName, ref m_grid);
+    public void SaveData(string docName) => SaveSystem.Save<T[,]>(docName, m_grid);
+
+    public int GetLength(int i) => m_grid.GetLength(i);
+    public bool ArrayHasBeenDeleted() => (m_grid == null);
 }
