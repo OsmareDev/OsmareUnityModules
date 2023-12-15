@@ -22,7 +22,7 @@ public class GridPath : MonoBehaviour
     [SerializeField] private Color m_colorForNotProcessed = Color.black;
 
     [SerializeField] private LayerMask m_collisionLayer;
-    [SerializeField] float m_percentageOfTheCellToCheck = 0.9f;
+    [SerializeField] private float m_percentageOfTheCellToCheck = 0.9f;
     [SerializeField] private string m_docName;
 
     #region UnityFunctions
@@ -85,8 +85,9 @@ public class GridPath : MonoBehaviour
                     grid[i,j].walkable = false;
                 } else {
                     grid[i,j].walkable = true;
-                    CheckNeighbours(i, j);
                 } 
+                
+                CheckNeighbours(i, j);
             }
             progress = ((i + 1) / (float)m_cellNumber.x);
             await Task.Yield();
@@ -95,83 +96,76 @@ public class GridPath : MonoBehaviour
 
     private void CheckNeighbours(int x, int y) {
         // we are going to check only the scanned neighbours
-        Vector2Int[] dxy = {new Vector2Int(-1, -1), new Vector2Int(0, -1), new Vector2Int(1, -1), new Vector2Int(-1, 0)};
+        Vector2Int[] dxy = {new Vector2Int(-1, -1), new Vector2Int(-1, 0), new Vector2Int(0, -1), new Vector2Int(-1, 1)};
 
         for (int i = 0; i < dxy.GetLength(0); ++i) {
-            if (x + dxy[i].x < 0 || y + dxy[i].y < 0 || x + dxy[i].x >= grid.NColumns || !grid[x + dxy[i].x, y + dxy[i].y].walkable) continue;
+            if (x + dxy[i].x < 0 || y + dxy[i].y < 0 || y + dxy[i].y >= grid.NRows || !grid[x + dxy[i].x, y + dxy[i].y].walkable) continue;
             grid[x, y].neightbors.Add(grid[x + dxy[i].x, y + dxy[i].y]);
-            grid[x + dxy[i].x, y + dxy[i].y].neightbors.Add(grid[x, y]);
+            if (grid[x, y].walkable) grid[x + dxy[i].x, y + dxy[i].y].neightbors.Add(grid[x, y]);
         }
     }
     #endregion
 
     #region Astar
-    public List<Node> FindPath(Vector3 start, Vector3 target)
+    public List<Vector3> FindPath(Vector3 start, Vector3 target)
     {
         Node startNode = grid.GetElementFromWorldCoordinates(start);
         Node targetNode = grid.GetElementFromWorldCoordinates(target);
 
+        //Using an SortedSet we dont need to compare in each iteration everithing, just once
         List<Node> openSet = new List<Node>();
         HashSet<Node> closedSet = new HashSet<Node>();
 
         openSet.Add(startNode);
+        int cont = 0;
 
         while (openSet.Count > 0)
         {
             Node currentNode = openSet[0];
 
-            // Encuentra el nodo con el costo F más bajo en el conjunto abierto
-            for (int i = 1; i < openSet.Count; i++)
-            {
-                if (openSet[i].fCost < currentNode.fCost || (openSet[i].fCost == currentNode.fCost && openSet[i].hCost < currentNode.hCost))
-                {
-                    currentNode = openSet[i];
-                }
-            }
+            for (int i = 1; i < openSet.Count; i ++) {
+				if (openSet[i].fCost < currentNode.fCost || openSet[i].fCost == currentNode.fCost) {
+					if (openSet[i].hCost < currentNode.hCost)
+						currentNode = openSet[i];
+				}
+			}
 
             openSet.Remove(currentNode);
             closedSet.Add(currentNode);
 
-            // Si hemos llegado al nodo objetivo, reconstruye el camino y devuelve la lista de nodos
-            if (currentNode == targetNode)
-            {
-                return RetracePath(startNode, targetNode);
-            }
+            if (currentNode == targetNode) return RetracePath(startNode, targetNode);
 
             foreach (Node neighbor in currentNode.neightbors)
             {
-                if (!neighbor.walkable || closedSet.Contains(neighbor))
-                {
-                    continue;
-                }
+                //if (!neighbor.walkable || closedSet.Contains(neighbor)) continue;
+                if (closedSet.Contains(neighbor)) continue;
 
                 int newMovementCostToNeighbor = (int)currentNode.gCost + GetDistance(currentNode, neighbor);
                 if (newMovementCostToNeighbor < neighbor.gCost || !openSet.Contains(neighbor))
                 {
                     neighbor.gCost = newMovementCostToNeighbor;
                     neighbor.hCost = GetDistance(neighbor, targetNode);
+                    neighbor.fCost = neighbor.gCost + neighbor.hCost;
                     neighbor.parent = currentNode;
 
-                    if (!openSet.Contains(neighbor))
-                    {
-                        openSet.Add(neighbor);
-                    }
+                    openSet.Remove(neighbor);
+                    openSet.Add(neighbor);
                 }
             }
         }
 
-        // Si no se puede encontrar un camino, devuelve una lista vacía
-        return new List<Node>();
+        Debug.Log("no encontrado"); 
+        return new List<Vector3>();
     }
 
-    private List<Node> RetracePath(Node startNode, Node endNode)
+    private List<Vector3> RetracePath(Node startNode, Node endNode)
     {
-        List<Node> path = new List<Node>();
+        List<Vector3> path = new List<Vector3>();
         Node currentNode = endNode;
 
         while (currentNode != startNode)
         {
-            path.Add(currentNode);
+            path.Add(grid.GridToWorldCoordinates(new Vector2(currentNode.GridX, currentNode.GridY)));
             currentNode = currentNode.parent;
         }
 
@@ -184,7 +178,9 @@ public class GridPath : MonoBehaviour
         int dstX = Mathf.Abs(nodeA.GridX - nodeB.GridX);
         int dstY = Mathf.Abs(nodeA.GridY - nodeB.GridY);
 
-        return dstX + dstY;
+        if (dstX > dstY) return (14 * dstY) + 10 * (dstX - dstY);
+
+        return (14 * dstX) + 10 * (dstY - dstX);
     }
     #endregion
 

@@ -63,8 +63,11 @@ using UnityEngine;
         percentX = Mathf.Clamp01(percentX);
         percentY = Mathf.Clamp01(percentY);
 
-        int x = Mathf.FloorToInt(percentX * NColumns);
-        int y = Mathf.FloorToInt(percentY * NRows);
+        int x = Mathf.FloorToInt(percentX * (NColumns));
+        int y = Mathf.FloorToInt(percentY * (NRows));
+
+        if (x == NColumns) x--;
+        if (y == NRows) y--;
 
         return new Vector2Int(x, y);
     }

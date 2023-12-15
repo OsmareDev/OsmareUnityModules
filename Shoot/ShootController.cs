@@ -139,12 +139,6 @@ class ShootControllerEditor : Editor {
         EditorGUILayout.PropertyField(m_bulletManager, true);
         EditorGUILayout.PropertyField(m_ammoType, true);
 
-        EditorGUILayout.PropertyField(m_shootAngle, true);
-        if (m_shootAngle.floatValue < 0) m_shootAngle.floatValue = 0;
-        EditorGUILayout.PropertyField(m_nBulletsPerShoot, true);
-        if (m_nBulletsPerShoot.intValue < 0) m_nBulletsPerShoot.intValue = 0;
-        EditorGUILayout.PropertyField(m_randomPositionInRange, true);
-
         serializedObject.ApplyModifiedProperties();
     }
 }

@@ -112,7 +112,7 @@ class TopDown2DCollisionControllerEditor : Editor {
     }
 
     public override void OnInspectorGUI() {
-        General2DCollisionController script = (General2DCollisionController)target;
+        TopDown2DCollisionController script = (TopDown2DCollisionController)target;
         serializedObject.Update();
         //EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
 

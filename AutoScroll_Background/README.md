@@ -1,0 +1,5 @@
+# AutoScroll Background
+
+# English
+
+# Español
