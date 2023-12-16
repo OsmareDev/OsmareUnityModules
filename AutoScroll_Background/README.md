@@ -14,7 +14,7 @@
    <tr><td><b>Problem</b></td></tr>
    <tr><td>When it comes to animating backgrounds and images, a fundamental task is to automatically pan the image to add expression or generate movement in the background. Unity does not provide a direct way to perform such an action.</td></tr>
    <tr><td><b>Solution</b></td></tr>
-   <tr><td>To solve this problem, the BackgroundMovement module will be created. This module will use one of Unity's image components to animate it in different ways.</td></tr>
+   <tr><td>To solve this problem, this module will be created. This module will use one of Unity's image components to animate it in different ways.</td></tr>
 </table>
 
 Unity provides us with two image modules:
@@ -33,7 +33,7 @@ The direction of scrolling will also be determined by the developer. If it is de
   <tr><td><b>Problema</b></td></tr>
   <tr><td>Cuando se trata de animar fondos e imágenes, una tarea fundamental es realizar un desplazamiento automático de la imagen para agregar expresión o generar movimiento en el fondo. Unity no provee una forma directa de realizar dicha acción.</td></tr>
   <tr><td><b>Solución</b></td></tr>
-  <tr><td>Para solventar este problema se creará el módulo BackgroundMovement. Este módulo utilizará uno de los componentes de imagen de Unity para animarlo de distintas maneras.</td></tr>
+  <tr><td>Para solventar este problema se creará este módulo. Este módulo utilizará uno de los componentes de imagen de Unity para animarlo de distintas maneras.</td></tr>
 </table>
 
 Unity nos proporciona dos módulos de imagen:
