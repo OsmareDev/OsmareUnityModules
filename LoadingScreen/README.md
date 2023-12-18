@@ -1,47 +1,32 @@
-# AutoScroll Background
-![a1_1](https://github.com/OsmareDev/OsmareUnityModules/assets/50903643/e6dc7063-684e-4bbb-87b3-3731492401a5)
----
-![a1_2](https://github.com/OsmareDev/OsmareUnityModules/assets/50903643/2b2e2e39-d2da-41f7-b6d5-80494f762960)
----
-![a1_3](https://github.com/OsmareDev/OsmareUnityModules/assets/50903643/098552b9-071b-4544-8a7e-eb0debddcea9)
----
-![a1_4](https://github.com/OsmareDev/OsmareUnityModules/assets/50903643/00fa4c28-0461-47e0-9292-5b9d74f245bf)
----
+# Loading Screen
+![a2](https://github.com/OsmareDev/OsmareUnityModules/assets/50903643/944dd90a-c61e-4a05-aab9-d3e19ae7c484)
 
 # English
 
 <table>
    <tr><td><b>Problem</b></td></tr>
-   <tr><td>When it comes to animating backgrounds and images, a fundamental task is to automatically pan the image to add expression or generate movement in the background. Unity does not provide a direct way to perform such an action.</td></tr>
+   <tr><td>In Unity, scene switching functionality is provided, but performing this transition does not hide the object loading of the next scene, resulting in a direct display of the object loading , similar to a theatrical performance without a curtain.</td></tr>
    <tr><td><b>Solution</b></td></tr>
-   <tr><td>To solve this problem, this module will be created. This module will use one of Unity's image components to animate it in different ways.</td></tr>
+   <tr><td>To solve this problem we will activate a canvas and by updating a loading bar we will give the player information about the progress.</td></tr>
 </table>
 
-Unity provides us with two image modules:
+To keep the module present in the scene consistently, it will be implemented using the **Singleton** design pattern. This module will ensure that it is unique to the scene and will be accessible from anywhere in the code.
 
-1. The component "[Image](https://docs.unity3d.com/es/2018.4/ScriptReference/UI.Image.html)", used to display a sprite in the user interface, has different variables, in In no case does it allow us to alter the texture.
+The module will receive as a parameter the canvas that you want to use as the loading screen, as well as the canvases that should be deactivated if necessary. The module will then start loading asynchronously and update the loading bar, which has been implemented using the **BarController** module.
 
-2. The "[Raw Image](https://docs.unity3d.com/es/2018.4/Manual/script-RawImage.html)" component allows us to view any type of image and gives us access to the UV rectangle. This rectangle represents the coordinates of the texture and we can modify it through code to give the sensation or illusion that the image is moving without having to move it.
-
-Next, we will proceed to calculate the amount of rotation in each frame, based on the developer's decisions. We will then calculate the amount of displacement based on the speed specified by the developer. To perform this calculation in each frame, we will use the function [Time.deltaTime](https://docs.unity3d.com/es/530/ScriptReference/Time-deltaTime.html), which represents "the time in seconds it took to the last frame is completed".
-
-The direction of scrolling will also be determined by the developer. If it is desired that, independently of the rotation, the image moves in a single direction, to do so we counteract the current rotation by rotating the calculated motion vector in the opposite direction.
+Once the scene has fully loaded, the loading screen is disabled and the corresponding scene will be displayed.
 
 # Español
 
 <table>
   <tr><td><b>Problema</b></td></tr>
-  <tr><td>Cuando se trata de animar fondos e imágenes, una tarea fundamental es realizar un desplazamiento automático de la imagen para agregar expresión o generar movimiento en el fondo. Unity no provee una forma directa de realizar dicha acción.</td></tr>
+  <tr><td>En Unity, se proporciona la funcionalidad de cambio de escenas, pero al realizar esta transición, no se oculta la carga de los objetos de la siguiente escena, lo que resulta en una visualización directa de la carga de los objetos, similar a una representación teatral sin telón.</td></tr>
   <tr><td><b>Solución</b></td></tr>
-  <tr><td>Para solventar este problema se creará este módulo. Este módulo utilizará uno de los componentes de imagen de Unity para animarlo de distintas maneras.</td></tr>
+  <tr><td>Para solventar este problema activaremos un canvas y actualizando una barra de carga daremos información al jugador del progreso.</td></tr>
 </table>
 
-Unity nos proporciona dos módulos de imagen:
+Para mantener el módulo presente en la escena de forma constante, se implementará utilizando el patrón de diseño **Singleton**. Este módulo se asegurará de ser único en la escena y estará accesible desde cualquier parte del código.
 
-1. El componente "[Image](https://docs.unity3d.com/es/2018.4/ScriptReference/UI.Image.html)", utilizado para mostrar un sprite en la interfaz de usuario, cuenta con distintas variables, en ningún caso nos permite alterar la textura.
+El módulo recibirá como parámetro el canvas que se desea usar como pantalla de carga, así como los canvas que deben desactivarse si es necesario. A continuación, el módulo iniciará la carga de forma asíncrona y actualizará la barra de carga, la cual se ha implementado utilizando el módulo **BarController**.
 
-2. El componente "[Raw Image](https://docs.unity3d.com/es/2018.4/Manual/script-RawImage.html)" nos permite visualizar cualquier tipo de imagen y nos brinda acceso a el rectángulo UV. Este rectángulo representa las coordenadas de la textura y podemos modificarlo mediante código para dar la sensación o la ilusión de que la imagen está en movimiento sin tener que moverla.
-
-A continuación, procederemos a calcular la cantidad de rotación en cada frame, basándonos en las decisiones del desarrollador. Después calcularemos la cantidad de desplazamiento en función de la velocidad especificada por el desarrollador. Para realizar este cálculo en cada frame, utilizaremos la función [Time.deltaTime](https://docs.unity3d.com/es/530/ScriptReference/Time-deltaTime.html), que representa "el tiempo en segundos que tardó en completarse el último frame".
-
-La dirección del desplazamiento también será determinada por el desarrollador. En caso de que se desee que, independientemente de la rotación, la imagen se desplace en una dirección única, para ello contrarrestamos la rotación actual girando en dirección opuesta el vector de movimiento calculado.
+Una vez que la escena se haya cargado por completo, se desactiva la pantalla de carga y se mostrará la escena correspondiente.
