@@ -29,18 +29,18 @@ public class GameSceneManager : Singleton<GameSceneManager>
         if (m_text) m_text.text = scene;
         AudioManager.Instance.StopMusic();
 
-        // la carga unity la lleva hasta el 90%
+        // unity takes the charge up to 90% only
         do {
             m_progresBar?.setValue(op.progress); 
 
-            // los delays se ponen para poder ver las barras en movimiento
+            // the delays are set to be able to see the bars in motion, because the majority of the scene load instantly
             // await Task.Yield();
             await Task.Delay(200);
         } while (op.progress < 0.9f);
 
         m_progresBar?.setValue(op.progress); 
 
-        // de nuevo es solo para hacer la prueba
+        // to see the load only
         await Task.Delay(1000);
 
         op.allowSceneActivation = true;
