@@ -1,47 +1,74 @@
 # AutoScroll Background
-![a1_1](https://github.com/OsmareDev/OsmareUnityModules/assets/50903643/e6dc7063-684e-4bbb-87b3-3731492401a5)
----
-![a1_2](https://github.com/OsmareDev/OsmareUnityModules/assets/50903643/2b2e2e39-d2da-41f7-b6d5-80494f762960)
----
-![a1_3](https://github.com/OsmareDev/OsmareUnityModules/assets/50903643/098552b9-071b-4544-8a7e-eb0debddcea9)
----
-![a1_4](https://github.com/OsmareDev/OsmareUnityModules/assets/50903643/00fa4c28-0461-47e0-9292-5b9d74f245bf)
----
+![a4_2](https://github.com/OsmareDev/OsmareUnityModules/assets/50903643/79e58cc7-a864-48d6-937f-0b8a287a8cf3)
+![a4_3](https://github.com/OsmareDev/OsmareUnityModules/assets/50903643/f544a8dc-5aef-4d59-ad5f-73bad878837d)
+
 
 # English
 
+When implementing the dialogue system, we must consider that it is not just about displaying text on the screen or a representative image of the character who speaks. A method needs to be established to link the texts together, so that we know which is next in the sequence. Additionally, some dialogues may offer options that branch the conversation.
+
+This leaves us with the following challenges:
+
 <table>
    <tr><td><b>Problem</b></td></tr>
-   <tr><td>When it comes to animating backgrounds and images, a fundamental task is to automatically pan the image to add expression or generate movement in the background. Unity does not provide a direct way to perform such an action.</td></tr>
+   <tr><td>Need to link one text with the next.</td></tr>
    <tr><td><b>Solution</b></td></tr>
-   <tr><td>To solve this problem, this module will be created. This module will use one of Unity's image components to animate it in different ways.</td></tr>
+   <tr><td>We can design a structure or class that stores the text, the reference to the image and a pointer that points to the next structure. In this way, when we finish displaying the current text and want to display the next one, we simply have to follow the reference indicated by the pointer.</td></tr>
 </table>
 
-Unity provides us with two image modules:
+<table>
+   <tr><td><b>Problem</b></td></tr>
+   <tr><td>We must consider that the dialogue may need to wait for a decision, as well as follow one route or another depending on said decision.</td></tr>
+   <tr><td><b>Solution</b></td></tr>
+   <tr><td>To solve this problem we will create a base class called BasicNode, which will contain only the text and the image. Next, the following classes derived from it will be created:
+<br><br>
+<b>-DialogNode:</b> It will only have a reference to the next node.
+<br>
+<b>-DecisionNode:</b> Will have a list of structures consisting of a text with the decision and a pointer to the node that corresponds to that decision.</td></tr>
+</table>
 
-1. The component "[Image](https://docs.unity3d.com/es/2018.4/ScriptReference/UI.Image.html)", used to display a sprite in the user interface, has different variables, in In no case does it allow us to alter the texture.
+To facilitate the creation of dialogs from the application, the nodes have been converted into [ScriptableObjects](https://docs.unity3d.com/Manual/class-ScriptableObject.html).
 
-2. The "[Raw Image](https://docs.unity3d.com/es/2018.4/Manual/script-RawImage.html)" component allows us to view any type of image and gives us access to the UV rectangle. This rectangle represents the coordinates of the texture and we can modify it through code to give the sensation or illusion that the image is moving without having to move it.
+The functionality is as follows:
 
-Next, we will proceed to calculate the amount of rotation in each frame, based on the developer's decisions. We will then calculate the amount of displacement based on the speed specified by the developer. To perform this calculation in each frame, we will use the function [Time.deltaTime](https://docs.unity3d.com/es/530/ScriptReference/Time-deltaTime.html), which represents "the time in seconds it took to the last frame is completed".
-
-The direction of scrolling will also be determined by the developer. If it is desired that, independently of the rotation, the image moves in a single direction, to do so we counteract the current rotation by rotating the calculated motion vector in the opposite direction.
+1. **Dialogue Node** The initial text nodes are stored in the nodes, from here we can select if we want these nodes to be executed in order. From the outside we start the dialogue and this module is responsible for telling the **Dialogue Box** that it should display the message.
+2. **Dialogue Box** From here the necessary checks are made and it is controlled that the message is written in the indicated place, a text effect derived from the interface **ITypeEffect** can be added
+3. **Type Effect** These modules are responsible for writing the text as programmed, to maintain the order 3 functions are used,
+- Begin: Responsible for starting the writing process
+- Check: It is responsible for checking if the writing process is still in progress
+- Finish: It is responsible for abruptly ending the writing process
 
 # Español
 
+Al implementar el sistema de diálogos, debemos considerar que no se trata únicamente de mostrar texto en pantalla o una imagen representativa del personaje que habla. Es necesario establecer un método para vincular los textos entre sí, de modo que sepamos cuál es el siguiente en la secuencia. Además, algunos diálogos pueden ofrecer opciones que ramifican la conversación.
+
+Esto nos deja los siguientes retos:
+
 <table>
   <tr><td><b>Problema</b></td></tr>
-  <tr><td>Cuando se trata de animar fondos e imágenes, una tarea fundamental es realizar un desplazamiento automático de la imagen para agregar expresión o generar movimiento en el fondo. Unity no provee una forma directa de realizar dicha acción.</td></tr>
+  <tr><td>Necesidad de vincular un texto con el siguiente.</td></tr>
   <tr><td><b>Solución</b></td></tr>
-  <tr><td>Para solventar este problema se creará este módulo. Este módulo utilizará uno de los componentes de imagen de Unity para animarlo de distintas maneras.</td></tr>
+  <tr><td>Podemos diseñar una estructura o clase que almacene el texto, la referencia a la imagen y un puntero que señale a la siguiente estructura. De esta manera, al finalizar la visualización del texto actual y querer mostrar el siguiente, simplemente debemos seguir la referencia señalada por el puntero.</td></tr>
 </table>
 
-Unity nos proporciona dos módulos de imagen:
+<table>
+  <tr><td><b>Problema</b></td></tr>
+  <tr><td>Debemos considerar que el diálogo puede necesitar esperar una decisión, así como seguir una ruta u otra en función de dicha decisión.</td></tr>
+  <tr><td><b>Solución</b></td></tr>
+  <tr><td>Para solucionar dicho problema crearemos una clase base llamada BasicNode, que contendrá solo el texto y la imagen. A continuación, se crearán las siguientes clases derivadas de ella:
+<br><br>
+<b>-DialogNode:</b> Tendrá únicamente una referencia al siguiente nodo.
+<br>
+<b>-DecisionNode:</b> Tendrá una lista de estructuras que constan de un texto con la decisión y un puntero al nodo que corresponde a esa decisión.</td></tr>
+</table>
 
-1. El componente "[Image](https://docs.unity3d.com/es/2018.4/ScriptReference/UI.Image.html)", utilizado para mostrar un sprite en la interfaz de usuario, cuenta con distintas variables, en ningún caso nos permite alterar la textura.
+Para facilitar la creación de diálogos desde la aplicación se han convertido los nodos en [ScriptableObjects](https://docs.unity3d.com/Manual/class-ScriptableObject.html).
 
-2. El componente "[Raw Image](https://docs.unity3d.com/es/2018.4/Manual/script-RawImage.html)" nos permite visualizar cualquier tipo de imagen y nos brinda acceso a el rectángulo UV. Este rectángulo representa las coordenadas de la textura y podemos modificarlo mediante código para dar la sensación o la ilusión de que la imagen está en movimiento sin tener que moverla.
+La funcionalidad es la siguiente:
 
-A continuación, procederemos a calcular la cantidad de rotación en cada frame, basándonos en las decisiones del desarrollador. Después calcularemos la cantidad de desplazamiento en función de la velocidad especificada por el desarrollador. Para realizar este cálculo en cada frame, utilizaremos la función [Time.deltaTime](https://docs.unity3d.com/es/530/ScriptReference/Time-deltaTime.html), que representa "el tiempo en segundos que tardó en completarse el último frame".
-
-La dirección del desplazamiento también será determinada por el desarrollador. En caso de que se desee que, independientemente de la rotación, la imagen se desplace en una dirección única, para ello contrarrestamos la rotación actual girando en dirección opuesta el vector de movimiento calculado.
+1. **Dialogue Node** En los nodos se almacenan los nodos de texto iniciales, desde aquí podemos seleccionar si queremos que dichos nodos se ejecuten en orden. Desde el exterior comenzamos el diálogo y este módulo se encarga de comunicarle al **Dialogue Box** que debe mostrar el mensaje.
+2. **Dialogue Box** Desde aquí se hacen las comprobaciones necesarias y se controla que el mensaje sea escrito en el lugar indicado, se puede añadir un efecto de texto derivado de la interfaz **ITypeEffect**
+3. **Type Effect** Estos módulos se encargan de escribir el texto según se programe, para mantener el orden se usan 3 funciones,
+- Begin: Se encarga de comenzar el proceso de escritura
+- Check: Se encarga de comprobar si el proceso de escritura sigue en curso
+- Finish: Se encarga de terminar abruptamente el proceso de escritura
