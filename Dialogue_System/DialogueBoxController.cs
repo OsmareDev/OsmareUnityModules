@@ -35,7 +35,7 @@ public class DialogueBoxController : MonoBehaviour, IPointerDownHandler
         DeleteOptions();
 
         if (m_text != null) m_text.text = node.text;
-        if (m_image != null) m_image.sprite = node.characterImage;
+        if (m_image != null && node.characterImage != null) m_image.sprite = node.characterImage;
 
         // check if there are options
         if (node is ChoiceNode && m_optionsGO != null && m_optionPrefab != null) {
@@ -128,7 +128,7 @@ class DialogueBoxControllerEditor : Editor {
         }
 
         EditorGUILayout.PropertyField(m_optionsGO, new GUIContent("Options Box"), true);
-        if (m_optionsGO != null) {
+        if (m_optionsGO.objectReferenceValue != null) {
             EditorGUI.indentLevel++;
             EditorGUILayout.PropertyField(m_optionPrefab, new GUIContent("Button prefab for options"), true);
             EditorGUI.indentLevel--;
@@ -137,7 +137,7 @@ class DialogueBoxControllerEditor : Editor {
         }
 
         EditorGUILayout.PropertyField(m_image, new GUIContent("Box for the image"), true);
-        if (m_optionsGO == null) {
+        if (m_image.objectReferenceValue == null) {
             EditorGUILayout.HelpBox("There is no box for the image", MessageType.Warning);
         }
 

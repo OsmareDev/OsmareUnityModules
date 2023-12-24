@@ -16,7 +16,8 @@ public class DialogueNodeController : MonoBehaviour
 
     public void BeginDialogue() {
         SelectNode();
-        
+        if (m_currentInitialNode >= m_initialTextNodes.Length || m_currentInitialNode < 0) return;
+
         m_dialogueGO?.gameObject.SetActive(true);
         m_dialogueGO.NextDialogue(m_initialTextNodes[m_currentInitialNode]);
     }

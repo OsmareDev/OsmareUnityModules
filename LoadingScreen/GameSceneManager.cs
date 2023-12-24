@@ -27,7 +27,6 @@ public class GameSceneManager : Singleton<GameSceneManager>
         m_progresBar?.setValue(0);
 
         if (m_text) m_text.text = scene;
-        AudioManager.Instance.StopMusic();
 
         // unity takes the charge up to 90% only
         do {
