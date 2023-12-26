@@ -1,74 +1,59 @@
 # AutoScroll Background
-![a4_2](https://github.com/OsmareDev/OsmareUnityModules/assets/50903643/79e58cc7-a864-48d6-937f-0b8a287a8cf3)
-![a4_3](https://github.com/OsmareDev/OsmareUnityModules/assets/50903643/f544a8dc-5aef-4d59-ad5f-73bad878837d)
+![a5_1](https://github.com/OsmareDev/OsmareUnityModules/assets/50903643/2e39a75b-c64a-48ff-a963-5a3feceebb09)
 
 
 # English
 
-When implementing the dialogue system, we must consider that it is not just about displaying text on the screen or a representative image of the character who speaks. A method needs to be established to link the texts together, so that we know which is next in the sequence. Additionally, some dialogues may offer options that branch the conversation.
-
-This leaves us with the following challenges:
+On mobile devices, players do not have traditional controls and must use screen-tap based controls. One way commonly used by developers is to create virtual buttons or joysticks, which are placed on the screen and detect when that specific area is pressed.
 
 <table>
    <tr><td><b>Problem</b></td></tr>
-   <tr><td>Need to link one text with the next.</td></tr>
+   <tr><td>Unity provides several tools to detect screen taps. However, the interpretation and management of these keystrokes is largely up to the developer.</td></tr>
    <tr><td><b>Solution</b></td></tr>
-   <tr><td>We can design a structure or class that stores the text, the reference to the image and a pointer that points to the next structure. In this way, when we finish displaying the current text and want to display the next one, we simply have to follow the reference indicated by the pointer.</td></tr>
+   <tr><td>A module called <b>JoyStickController</b> is implemented to detect and interpret the player's actions when clicking and dragging on a specific area of the screen.</td></tr>
 </table>
 
-<table>
-   <tr><td><b>Problem</b></td></tr>
-   <tr><td>We must consider that the dialogue may need to wait for a decision, as well as follow one route or another depending on said decision.</td></tr>
-   <tr><td><b>Solution</b></td></tr>
-   <tr><td>To solve this problem we will create a base class called BasicNode, which will contain only the text and the image. Next, the following classes derived from it will be created:
-<br><br>
-<b>-DialogNode:</b> It will only have a reference to the next node.
-<br>
-<b>-DecisionNode:</b> Will have a list of structures consisting of a text with the decision and a pointer to the node that corresponds to that decision.</td></tr>
-</table>
+We will manage the control through 3 phases:
 
-To facilitate the creation of dialogs from the application, the nodes have been converted into [ScriptableObjects](https://docs.unity3d.com/Manual/class-ScriptableObject.html).
+- ### Start of pressure:
+We will use the function [OnPointerDown](https://docs.unity3d.com/es/530/ScriptReference/UI.Selectable.OnPointerDown.html) to detect the player's pressure point on the screen. By making use of this feature, we ensure that it is only activated within the designated canvas.
 
-The functionality is as follows:
+We record the position of the pressure made by the player and we will place the images corresponding to the joystick in that same position.
 
-1. **Dialogue Node** The initial text nodes are stored in the nodes, from here we can select if we want these nodes to be executed in order. From the outside we start the dialogue and this module is responsible for telling the **Dialogue Box** that it should display the message.
-2. **Dialogue Box** From here the necessary checks are made and it is controlled that the message is written in the indicated place, a text effect derived from the interface **ITypeEffect** can be added
-3. **Type Effect** These modules are responsible for writing the text as programmed, to maintain the order 3 functions are used,
-- Begin: Responsible for starting the writing process
-- Check: It is responsible for checking if the writing process is still in progress
-- Finish: It is responsible for abruptly ending the writing process
+- ### Drag:
+We will implement the function [OnDrag](https://docs.unity3d.com/es/530/ScriptReference/EventSystems.IDragHandler.OnDrag.html) to detect the movement of the player's finger on the screen. Here we will store a second position that will correspond to the current location of the finger. By subtracting this new position from the initial position of the pressure and setting the magnitude of the maximum vector to 1, we can obtain the direction of movement.
+
+Finally, we will update the internal image of the joystick to generate the sensation of movement. The position of this image will be adjusted within the limits set by the developer for maximum joystick travel.
+
+- ### End of pressure:
+We will implement the function [OnPointerUp](https://docs.unity3d.com/es/530/ScriptReference/EventSystems.IPointerUpHandler.html) to detect when the player lifts his finger from the screen. Here we will override the direction of movement and remove the images from the screen.
+
+To get the direction information, the GetValue function of the script is used.
 
 # Español
 
-Al implementar el sistema de diálogos, debemos considerar que no se trata únicamente de mostrar texto en pantalla o una imagen representativa del personaje que habla. Es necesario establecer un método para vincular los textos entre sí, de modo que sepamos cuál es el siguiente en la secuencia. Además, algunos diálogos pueden ofrecer opciones que ramifican la conversación.
-
-Esto nos deja los siguientes retos:
+En dispositivos móviles, los jugadores no cuentan con controles tradicionales y deben utilizar controles basados en pulsaciones de pantalla. Una forma comúnmente utilizada por los desarrolladores es la creación de botones o joysticks virtuales, que se colocan en la pantalla y detectan cuando se pulsa esa área específica.
 
 <table>
   <tr><td><b>Problema</b></td></tr>
-  <tr><td>Necesidad de vincular un texto con el siguiente.</td></tr>
+  <tr><td>Unity proporciona diversas herramientas para detectar las pulsaciones en pantalla. Sin embargo, la interpretación y gestión de estas pulsaciones depende en gran medida del desarrollador.</td></tr>
   <tr><td><b>Solución</b></td></tr>
-  <tr><td>Podemos diseñar una estructura o clase que almacene el texto, la referencia a la imagen y un puntero que señale a la siguiente estructura. De esta manera, al finalizar la visualización del texto actual y querer mostrar el siguiente, simplemente debemos seguir la referencia señalada por el puntero.</td></tr>
+  <tr><td>Se implementa un módulo denominado <b>JoyStickController</b> para detectar e interpretar las acciones del jugador al pulsar y arrastrar sobre una zona específica de la pantalla.</td></tr>
 </table>
 
-<table>
-  <tr><td><b>Problema</b></td></tr>
-  <tr><td>Debemos considerar que el diálogo puede necesitar esperar una decisión, así como seguir una ruta u otra en función de dicha decisión.</td></tr>
-  <tr><td><b>Solución</b></td></tr>
-  <tr><td>Para solucionar dicho problema crearemos una clase base llamada BasicNode, que contendrá solo el texto y la imagen. A continuación, se crearán las siguientes clases derivadas de ella:
-<br><br>
-<b>-DialogNode:</b> Tendrá únicamente una referencia al siguiente nodo.
-<br>
-<b>-DecisionNode:</b> Tendrá una lista de estructuras que constan de un texto con la decisión y un puntero al nodo que corresponde a esa decisión.</td></tr>
-</table>
+Gestionaremos el control a través de 3 fases:
 
-Para facilitar la creación de diálogos desde la aplicación se han convertido los nodos en [ScriptableObjects](https://docs.unity3d.com/Manual/class-ScriptableObject.html).
+- ### Comienzo de la presión:
+Utilizaremos la función [OnPointerDown](https://docs.unity3d.com/es/530/ScriptReference/UI.Selectable.OnPointerDown.html) para detectar el punto de presión del jugador en la pantalla. Al hacer uso de esta función, nos aseguramos de que solo se active dentro del canvas designado.
 
-La funcionalidad es la siguiente:
+Registramos la posición de la presión realizada por el jugador y colocaremos las imágenes correspondientes al joystick en esa misma posición.
 
-1. **Dialogue Node** En los nodos se almacenan los nodos de texto iniciales, desde aquí podemos seleccionar si queremos que dichos nodos se ejecuten en orden. Desde el exterior comenzamos el diálogo y este módulo se encarga de comunicarle al **Dialogue Box** que debe mostrar el mensaje.
-2. **Dialogue Box** Desde aquí se hacen las comprobaciones necesarias y se controla que el mensaje sea escrito en el lugar indicado, se puede añadir un efecto de texto derivado de la interfaz **ITypeEffect**
-3. **Type Effect** Estos módulos se encargan de escribir el texto según se programe, para mantener el orden se usan 3 funciones,
-- Begin: Se encarga de comenzar el proceso de escritura
-- Check: Se encarga de comprobar si el proceso de escritura sigue en curso
-- Finish: Se encarga de terminar abruptamente el proceso de escritura
+- ### Arrastrar:
+Implementaremos la función [OnDrag](https://docs.unity3d.com/es/530/ScriptReference/EventSystems.IDragHandler.OnDrag.html) para detectar el desplazamiento del dedo del jugador en la pantalla. Aquí almacenaremos una segunda posición que corresponderá a la ubicación actual del dedo. Restando esta nueva posición con la posición inicial de la presión y poniendo como magnitud del vector máxima 1, podremos obtener la dirección del movimiento.
+
+Por último, actualizaremos la imagen interna del joystick para generar la sensación de movimiento. La posición de esta imagen se ajustará dentro de los límites puestos por el desarrollador para el máximo desplazamiento del joystick.
+
+- ### Fin de la presión:
+Implementaremos la función [OnPointerUp](https://docs.unity3d.com/es/530/ScriptReference/EventSystems.IPointerUpHandler.html) para detectar cuando el jugador levante el dedo de la pantalla. Aquí anularemos la dirección de movimiento y quitaremos las imágenes de la pantalla.
+
+Para sacar la información de la dirección se usa la funcion GetValue del script.
