@@ -4,6 +4,8 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using UnityEngine.EventSystems;
+using UnityEngine.InputSystem;
+using System.Linq;
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -22,6 +24,7 @@ public class DialogueBoxController : MonoBehaviour, IPointerDownHandler
     [SerializeField] private GameObject m_optionPrefab;
 
     [SerializeField] private Image m_image;
+    [SerializeField] private List<InputActionReference> m_actionsToInteract;
 
     public void NextDialogue(BasicNode node) {
 
@@ -88,6 +91,12 @@ public class DialogueBoxController : MonoBehaviour, IPointerDownHandler
     public void OnPointerDown(PointerEventData eventData) {
         UpdateDialogue();
     }
+
+    public void Update() {
+        if (m_actionsToInteract.Count( action => action.action.triggered) > 0) {
+            UpdateDialogue();
+        }
+    }
 }
 
 #region Editor
@@ -95,7 +104,7 @@ public class DialogueBoxController : MonoBehaviour, IPointerDownHandler
 [CustomEditor(typeof(DialogueBoxController))]
 class DialogueBoxControllerEditor : Editor {
 
-    SerializedProperty m_text, m_useTypeEffect, m_typeEffect, m_optionsGO, m_optionPrefab, m_image;
+    SerializedProperty m_text, m_useTypeEffect, m_typeEffect, m_optionsGO, m_optionPrefab, m_image, m_actionsToInteract;
 
     private void OnEnable() {
         m_text = serializedObject.FindProperty("m_text");
@@ -106,6 +115,8 @@ class DialogueBoxControllerEditor : Editor {
         m_optionsGO = serializedObject.FindProperty("m_optionsGO");
         m_optionPrefab = serializedObject.FindProperty("m_optionPrefab");
         m_image = serializedObject.FindProperty("m_image");
+
+        m_actionsToInteract = serializedObject.FindProperty("m_actionsToInteract");
     }
 
     public override void OnInspectorGUI() {
@@ -139,6 +150,11 @@ class DialogueBoxControllerEditor : Editor {
         EditorGUILayout.PropertyField(m_image, new GUIContent("Box for the image"), true);
         if (m_image.objectReferenceValue == null) {
             EditorGUILayout.HelpBox("There is no box for the image", MessageType.Warning);
+        }
+
+        EditorGUILayout.PropertyField(m_actionsToInteract, new GUIContent("Actions to update text"), true);
+        if (m_actionsToInteract.arraySize == 0) {
+            EditorGUILayout.HelpBox("The click will be the only thing that will trigger te text update", MessageType.Warning);
         }
 
         serializedObject.ApplyModifiedProperties();
