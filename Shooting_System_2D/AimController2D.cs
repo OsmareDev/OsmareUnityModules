@@ -27,8 +27,9 @@ public class AimController2D : MonoBehaviour
     [SerializeField] private Transform m_rotationCenter;
     [SerializeField] private float m_rotationVelocity = 500f;
 
-    private Vector2 m_lookDirection, m_moveDirection, m_lastDirection;
+    private Vector2 m_lookDirection, m_lastDirection;
     private bool m_shootedThisFrame;
+    private GameObject m_target;
 
     private void Start() => m_lastDirection = transform.up;
 
@@ -40,6 +41,7 @@ public class AimController2D : MonoBehaviour
     public void NextShootType() => AimType = Helpers.GetNextInEnum<AimTypeEnum>((int)AimType);
 
     public void SetAimDirection( Vector2 lookDirection, Vector2 moveDirection = default) => m_lookDirection = (lookDirection == Vector2.zero) ? moveDirection : lookDirection; 
+    public void SetTarget(GameObject target) => m_target = target;
 
     #endregion
 
@@ -54,8 +56,6 @@ public class AimController2D : MonoBehaviour
     }
 
     private Vector2 GetDirectionToLookAt() {
-        Collider2D closest = GetClosestEnemyInRange();
-
         // The default action is aiming in the looking direction, if there is none then will be the same as last frame
         Vector2 directionToAimFor = (m_lookDirection != Vector2.zero) ? m_lookDirection : m_lastDirection;
         switch(AimType) {
@@ -63,7 +63,13 @@ public class AimController2D : MonoBehaviour
             break;
 
             case AimTypeEnum.AssistedAim:
-            if (closest) directionToAimFor = (closest.transform.position - transform.parent.transform.position).normalized;
+            if (m_target) {
+                directionToAimFor = (m_target.transform.position - transform.parent.transform.position).normalized;
+                m_target = null;
+            } else {
+                Collider2D closest = GetClosestEnemyInRange();
+                if (closest) directionToAimFor = (closest.transform.position - transform.parent.transform.position).normalized;
+            }
             break;
 
             case AimTypeEnum.AimIn4Directions:
