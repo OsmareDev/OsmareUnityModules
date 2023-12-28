@@ -10,6 +10,12 @@ using UnityEditor;
 
 public class BarController : MonoBehaviour
 {
+    public enum Bar_Types {
+        HORIZONTAL,
+        VERTICAL,
+        CIRCULAR
+    }
+
     [SerializeField] private Bar_Types m_type;
     [SerializeField] private Image[] m_bars;
  

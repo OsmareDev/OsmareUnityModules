@@ -17,9 +17,3 @@ public enum AxisDirection {
     Forward,
     Backwards
 }
-
-public enum Bar_Types {
-    HORIZONTAL,
-    VERTICAL,
-    CIRCULAR
-}

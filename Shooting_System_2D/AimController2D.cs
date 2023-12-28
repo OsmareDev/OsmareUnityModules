@@ -23,8 +23,6 @@ public class AimController2D : MonoBehaviour
     [SerializeField] private LayerMask m_wallLayer;
     
     [SerializeField] private int m_numberOfDirections = 16;
-
-    [SerializeField] private Object m_playerInput; //IInputManager
     
     [SerializeField] private Transform m_rotationCenter;
     [SerializeField] private float m_rotationVelocity = 500f;
@@ -35,18 +33,14 @@ public class AimController2D : MonoBehaviour
     private void Start() => m_lastDirection = transform.up;
 
     private void Update() {
-        GatherInput();
         ApplyRotation(GetDirectionToLookAt());  
     }
 
     #region Inputs
     public void NextShootType() => AimType = Helpers.GetNextInEnum<AimTypeEnum>((int)AimType);
 
-    private void GatherInput() {
-        m_moveDirection = (m_playerInput)? ((IInputManager)m_playerInput).GetMoveDirection() : default(Vector2);
-        m_lookDirection = (m_playerInput)? ((IInputManager)m_playerInput).GetLookDirection() : default(Vector2);
-        if (m_playerInput && ((IInputManager)m_playerInput).JumpedThisFrame()) NextShootType();
-    }
+    public void SetAimDirection( Vector2 lookDirection, Vector2 moveDirection = default) => m_lookDirection = (lookDirection == Vector2.zero) ? moveDirection : lookDirection; 
+
     #endregion
 
     #region DirectionCalculation
@@ -62,12 +56,10 @@ public class AimController2D : MonoBehaviour
     private Vector2 GetDirectionToLookAt() {
         Collider2D closest = GetClosestEnemyInRange();
 
-        // The default action is aiming in the moving direction, if is not moving then the direction from the last time
-        Vector2 directionToAimFor = (m_moveDirection != Vector2.zero) ? m_moveDirection : m_lastDirection;
+        // The default action is aiming in the looking direction, if there is none then will be the same as last frame
+        Vector2 directionToAimFor = (m_lookDirection != Vector2.zero) ? m_lookDirection : m_lastDirection;
         switch(AimType) {
             case AimTypeEnum.FreeAim:
-            if (Input.mousePresent) directionToAimFor = (Helpers.CameraMain.ScreenToWorldPoint(Input.mousePosition) - m_rotationCenter.position).normalized;
-            if (m_lookDirection != Vector2.zero) directionToAimFor = m_lookDirection;
             break;
 
             case AimTypeEnum.AssistedAim:
@@ -75,17 +67,14 @@ public class AimController2D : MonoBehaviour
             break;
 
             case AimTypeEnum.AimIn4Directions:
-            if (m_lookDirection != Vector2.zero) directionToAimFor = m_lookDirection;
             directionToAimFor = ConvertAimInNDirection(directionToAimFor, 4);
             break;
 
             case AimTypeEnum.AimIn8Directions:
-            if (m_lookDirection != Vector2.zero) directionToAimFor = m_lookDirection;
             directionToAimFor = ConvertAimInNDirection(directionToAimFor, 8);
             break;
 
             case AimTypeEnum.AimInNDirections:
-            if (m_lookDirection != Vector2.zero) directionToAimFor = m_lookDirection;
             directionToAimFor = ConvertAimInNDirection(directionToAimFor, m_numberOfDirections);
             break;
         }
@@ -124,12 +113,11 @@ public class AimController2D : MonoBehaviour
 #if UNITY_EDITOR
 [CustomEditor(typeof(AimController2D))]
 class AimController2DEditor : Editor {
-    SerializedProperty m_enemyLayer, m_maxDistanceToDetect, m_playerInput, m_rotationCenter, m_rotationVelocity, m_takeWallsIntoAccount, m_wallLayer, m_numberOfDirections;
+    SerializedProperty m_enemyLayer, m_maxDistanceToDetect, m_rotationCenter, m_rotationVelocity, m_takeWallsIntoAccount, m_wallLayer, m_numberOfDirections;
 
     private void OnEnable() {
         m_enemyLayer = serializedObject.FindProperty("m_enemyLayer");
         m_maxDistanceToDetect = serializedObject.FindProperty("m_maxDistanceToDetect");
-        m_playerInput = serializedObject.FindProperty("m_playerInput");
         m_rotationCenter = serializedObject.FindProperty("m_rotationCenter");
         m_rotationVelocity = serializedObject.FindProperty("m_rotationVelocity");
         m_takeWallsIntoAccount = serializedObject.FindProperty("m_takeWallsIntoAccount");
@@ -141,15 +129,7 @@ class AimController2DEditor : Editor {
         AimController2D script = (AimController2D)target;
         serializedObject.Update();
 
-        EditorHelpers.CollectInterface<IInputManager>(ref m_playerInput, "Input Manager ");
-        if (m_playerInput.objectReferenceValue == null) {
-            EditorGUILayout.HelpBox("if there is no playerInput only the free aim mode with mouse will work", MessageType.Warning);
-        }
-
         script.AimType = (AimController2D.AimTypeEnum)EditorGUILayout.EnumPopup("Aim Type :", script.AimType);
-        if (m_playerInput.objectReferenceValue == null) {
-            script.AimType = AimController2D.AimTypeEnum.FreeAim;
-        }
 
         if (script.AimType == AimController2D.AimTypeEnum.AssistedAim) {
             EditorGUI.indentLevel++;

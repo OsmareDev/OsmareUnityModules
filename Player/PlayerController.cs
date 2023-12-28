@@ -9,6 +9,7 @@ public class PlayerController : MonoBehaviour
 
     [SerializeField] private Object m_collisionController; //IMoveable
     [SerializeField] private Object m_playerInput; //IInputManager
+    [SerializeField] private AimController2D m_aim;
     [SerializeField] private float m_velocity = 5f;
 
     [SerializeField] private float m_cameraVelocity = 20f;
@@ -23,6 +24,8 @@ public class PlayerController : MonoBehaviour
         CheckCameraControl();
         //TODO : hacer para llamar a la funcion pedida en el editor en vez de la interfaz
         ((IMoveable)m_collisionController).Move(m_movementDirection * (m_velocity * Time.deltaTime));
+
+        m_aim.SetAimDirection(((IInputManager)m_playerInput).GetLookDirection(), m_movementDirection);
     }
 
     private void GatherInput() {
@@ -43,6 +46,8 @@ public class PlayerController : MonoBehaviour
 [CustomEditor(typeof(PlayerController))]
 class PlayerControllerEditor : Editor {
     SerializedProperty m_collisionController, m_playerInput, m_velocity, m_cameraVelocity, cameraControl;
+    SerializedProperty m_aim;
+    
 
     private void OnEnable() {
         m_collisionController = serializedObject.FindProperty("m_collisionController");
@@ -50,6 +55,7 @@ class PlayerControllerEditor : Editor {
         m_velocity = serializedObject.FindProperty("m_velocity");
         m_cameraVelocity = serializedObject.FindProperty("m_collisionController");
         cameraControl = serializedObject.FindProperty("<CameraControl>k__BackingField");
+        m_aim = serializedObject.FindProperty("m_aim");
     }
 
     public override void OnInspectorGUI() {
@@ -69,6 +75,9 @@ class PlayerControllerEditor : Editor {
         if (m_playerInput.objectReferenceValue == null) EditorGUILayout.HelpBox("There is no input(IInputManager) attached", MessageType.Warning);
         EditorGUILayout.PropertyField(m_velocity, true);
         EditorGUILayout.PropertyField(cameraControl, true);
+
+        // Arreglar
+        EditorGUILayout.PropertyField(m_aim, true);
 
         serializedObject.ApplyModifiedProperties();
     }
