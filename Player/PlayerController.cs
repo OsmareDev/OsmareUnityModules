@@ -10,6 +10,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private Object m_collisionController; //IMoveable
     [SerializeField] private Object m_playerInput; //IInputManager
     [SerializeField] private AimController2D m_aim;
+    [SerializeField] private ShootController m_shoot;
     [SerializeField] private float m_velocity = 5f;
 
     [SerializeField] private float m_cameraVelocity = 20f;
@@ -26,6 +27,7 @@ public class PlayerController : MonoBehaviour
         ((IMoveable)m_collisionController).Move(m_movementDirection * (m_velocity * Time.deltaTime));
 
         m_aim.SetAimDirection(((IInputManager)m_playerInput).GetLookDirection(), m_movementDirection);
+        if (((IInputManager)m_playerInput).ShootedThisFrame()) m_shoot.Shoot();
     }
 
     private void GatherInput() {
@@ -46,7 +48,7 @@ public class PlayerController : MonoBehaviour
 [CustomEditor(typeof(PlayerController))]
 class PlayerControllerEditor : Editor {
     SerializedProperty m_collisionController, m_playerInput, m_velocity, m_cameraVelocity, cameraControl;
-    SerializedProperty m_aim;
+    SerializedProperty m_aim, m_shoot;
     
 
     private void OnEnable() {
@@ -56,6 +58,7 @@ class PlayerControllerEditor : Editor {
         m_cameraVelocity = serializedObject.FindProperty("m_collisionController");
         cameraControl = serializedObject.FindProperty("<CameraControl>k__BackingField");
         m_aim = serializedObject.FindProperty("m_aim");
+        m_shoot = serializedObject.FindProperty("m_shoot");
     }
 
     public override void OnInspectorGUI() {
@@ -78,6 +81,7 @@ class PlayerControllerEditor : Editor {
 
         // Arreglar
         EditorGUILayout.PropertyField(m_aim, true);
+        EditorGUILayout.PropertyField(m_shoot, true);
 
         serializedObject.ApplyModifiedProperties();
     }

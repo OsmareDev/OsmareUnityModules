@@ -13,8 +13,6 @@ public class ShootController : MonoBehaviour
     [SerializeField] private Transform m_launchPosition; //
     [SerializeField] private AxisDirection m_axisDirection;
 
-    [SerializeField] private UnityEngine.Object m_inputManager; //IInputManager
-
     [SerializeField] private BulletManager m_bulletManager;
     [SerializeField] private BaseBullet m_ammoType;
 
@@ -28,13 +26,13 @@ public class ShootController : MonoBehaviour
     private float m_lastBulletTime = 0;
 
     #region UnityFunctions
-    public void Update() { if (((IInputManager)m_inputManager).ShootedThisFrame()) Shoot(); }
 
     private void OnDrawGizmos() {
         Gizmos.color = Color.green;
         float beginAngle = -(m_stats.shootAngle / 2f);
 
         if (!Application.isPlaying) LoadDirection();
+        // draw the range of shooting
         Gizmos.DrawRay(transform.position, Quaternion.AngleAxis(beginAngle, -m_directionToShoot.forward) * m_direction * 2);
         Gizmos.DrawRay(transform.position, Quaternion.AngleAxis(-beginAngle, -m_directionToShoot.forward) * m_direction * 2);
     }
@@ -106,13 +104,12 @@ public class ShootController : MonoBehaviour
 #if UNITY_EDITOR
 [CustomEditor(typeof(ShootController))]
 class ShootControllerEditor : Editor {
-    SerializedProperty m_directionToShoot, m_axisDirection, m_bulletManager, m_inputManager, m_ammoType, m_launchPosition, m_shootAngle, 
+    SerializedProperty m_directionToShoot, m_axisDirection, m_bulletManager, m_ammoType, m_launchPosition, m_shootAngle, 
         m_nBulletsPerShoot, m_randomPositionInRange, m_stats;
 
     private void OnEnable() {
         m_axisDirection = serializedObject.FindProperty("m_axisDirection");
         m_directionToShoot = serializedObject.FindProperty("m_directionToShoot");
-        m_inputManager = serializedObject.FindProperty("m_inputManager");
         m_bulletManager = serializedObject.FindProperty("m_bulletManager");
         m_ammoType = serializedObject.FindProperty("m_ammoType");
         m_launchPosition = serializedObject.FindProperty("m_launchPosition");
@@ -135,7 +132,6 @@ class ShootControllerEditor : Editor {
         
         EditorGUILayout.PropertyField(m_axisDirection, true);
         
-        EditorHelpers.CollectInterface<IInputManager>(ref m_inputManager, "Input Manager ");
         EditorGUILayout.PropertyField(m_bulletManager, true);
         EditorGUILayout.PropertyField(m_ammoType, true);
 
