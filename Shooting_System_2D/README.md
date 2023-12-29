@@ -1,13 +1,6 @@
-<<<<<<< HEAD
-# Shooting System
-![a4_2](https://github.com/OsmareDev/OsmareUnityModules/assets/50903643/79e58cc7-a864-48d6-937f-0b8a287a8cf3)
-![a4_3](https://github.com/OsmareDev/OsmareUnityModules/assets/50903643/f544a8dc-5aef-4d59-ad5f-73bad878837d)
-
-=======
 # Shooting System 2D
 ![a6_1](https://github.com/OsmareDev/OsmareUnityModules/assets/50903643/5413d407-863d-4051-b79b-07409c2b5d2d)
 ![a6_2](https://github.com/OsmareDev/OsmareUnityModules/assets/50903643/aa2b61f5-99c3-44c9-a105-432ffebeaba3)
->>>>>>> 3c7654d53e5a56ada798508d2875be3199131eab
 
 # English
 
