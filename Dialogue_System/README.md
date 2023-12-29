@@ -1,4 +1,4 @@
-# AutoScroll Background
+# Dialogue System
 ![a4_2](https://github.com/OsmareDev/OsmareUnityModules/assets/50903643/79e58cc7-a864-48d6-937f-0b8a287a8cf3)
 ![a4_3](https://github.com/OsmareDev/OsmareUnityModules/assets/50903643/f544a8dc-5aef-4d59-ad5f-73bad878837d)
 

@@ -1,4 +1,4 @@
-# AutoScroll Background
+# HUD Bar Controller
 ![a3_2](https://github.com/OsmareDev/OsmareUnityModules/assets/50903643/0fc8db23-7f0c-45ee-b39b-a68c3b604fec)
 
 # English
