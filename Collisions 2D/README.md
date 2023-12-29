@@ -1,47 +1,44 @@
 # Collisions 2D
-![a1_1](https://github.com/OsmareDev/OsmareUnityModules/assets/50903643/e6dc7063-684e-4bbb-87b3-3731492401a5)
----
-![a1_2](https://github.com/OsmareDev/OsmareUnityModules/assets/50903643/2b2e2e39-d2da-41f7-b6d5-80494f762960)
----
-![a1_3](https://github.com/OsmareDev/OsmareUnityModules/assets/50903643/098552b9-071b-4544-8a7e-eb0debddcea9)
----
-![a1_4](https://github.com/OsmareDev/OsmareUnityModules/assets/50903643/00fa4c28-0461-47e0-9292-5b9d74f245bf)
----
+![a7_1](https://github.com/OsmareDev/OsmareUnityModules/assets/50903643/2ac45408-a174-4e0a-ae23-a3dabc50f3ef)
+![a7_2](https://github.com/OsmareDev/OsmareUnityModules/assets/50903643/d657dc3d-f98f-4151-b276-b2cdf2134fe7)
+
 
 # English
+# In progress... (Done: TopDown Collision System)
+
+Collisions in a video game are the basis of any movement system and therefore constitute a fundamental part of their development.
 
 <table>
    <tr><td><b>Problem</b></td></tr>
-   <tr><td>When it comes to animating backgrounds and images, a fundamental task is to automatically pan the image to add expression or generate movement in the background. Unity does not provide a direct way to perform such an action.</td></tr>
+   <tr><td>Unity brings with it a physics-based movement which is a problem when it comes to implementing dynamic and unrealistic movements. On the other hand, it also brings a character controller that, despite being decent in 3D, has quite a few problems. </td></tr>
    <tr><td><b>Solution</b></td></tr>
-   <tr><td>To solve this problem, this module will be created. This module will use one of Unity's image components to animate it in different ways.</td></tr>
+   <tr><td>We will make our own collision detection system</td></tr>
 </table>
+ 
+To do this, each frame we will detect the initial and final position of the movement to be made. In case of detecting a collision against the layer indicated in the editor, we will calculate the new movement vector.
 
-Unity provides us with two image modules:
+<br>
 
-1. The component "[Image](https://docs.unity3d.com/es/2018.4/ScriptReference/UI.Image.html)", used to display a sprite in the user interface, has different variables, in In no case does it allow us to alter the texture.
+As an extra, to make the collisions better and less clumsy we will add a collision system with an angle, if the collision falls within the angle indicated from the editor the character will slide against the collision. This way we have a collision that is less frustrating for the player.
 
-2. The "[Raw Image](https://docs.unity3d.com/es/2018.4/Manual/script-RawImage.html)" component allows us to view any type of image and gives us access to the UV rectangle. This rectangle represents the coordinates of the texture and we can modify it through code to give the sensation or illusion that the image is moving without having to move it.
-
-Next, we will proceed to calculate the amount of rotation in each frame, based on the developer's decisions. We will then calculate the amount of displacement based on the speed specified by the developer. To perform this calculation in each frame, we will use the function [Time.deltaTime](https://docs.unity3d.com/es/530/ScriptReference/Time-deltaTime.html), which represents "the time in seconds it took to the last frame is completed".
-
-The direction of scrolling will also be determined by the developer. If it is desired that, independently of the rotation, the image moves in a single direction, to do so we counteract the current rotation by rotating the calculated motion vector in the opposite direction.
+…
 
 # Español
+# En progreso... (Hechos: Sistema de Colisiones TopDown)
+
+Las colisiones en un videojuego son la base de cualquier sistema de movimiento y por ende constituyen una parte fundamental en el desarrollo de los mismos.
 
 <table>
   <tr><td><b>Problema</b></td></tr>
-  <tr><td>Cuando se trata de animar fondos e imágenes, una tarea fundamental es realizar un desplazamiento automático de la imagen para agregar expresión o generar movimiento en el fondo. Unity no provee una forma directa de realizar dicha acción.</td></tr>
+  <tr><td>Unity trae consigo un movimiento por físicas el cual es un problema a la hora de implementar movimientos dinámicos y poco realistas, por el otro lado tambien trae un character controller que a pesar de ser decente en 3D tiene bastantes problemas.</td></tr>
   <tr><td><b>Solución</b></td></tr>
-  <tr><td>Para solventar este problema se creará este módulo. Este módulo utilizará uno de los componentes de imagen de Unity para animarlo de distintas maneras.</td></tr>
+  <tr><td>Realizaremos nuestro propio sistema de detección de colisiones</td></tr>
 </table>
+ 
+Para ello detectaremos cada frame la posición inicial y final del movimiento a realizar, en caso de detectar una colisión contra la capa señalada en el editor calcularemos el nuevo vector de movimiento
 
-Unity nos proporciona dos módulos de imagen:
+<br>
 
-1. El componente "[Image](https://docs.unity3d.com/es/2018.4/ScriptReference/UI.Image.html)", utilizado para mostrar un sprite en la interfaz de usuario, cuenta con distintas variables, en ningún caso nos permite alterar la textura.
+Como extra, para que las colisiones sean mejores y menos torpes añadiremos un sistema de colisión con ángulo, si la colisión entra dentro del ángulo señalado desde el editor el personaje resbalará contra la colisión. De este modo tenemos una colisión que es menos frustrante para el jugador.
 
-2. El componente "[Raw Image](https://docs.unity3d.com/es/2018.4/Manual/script-RawImage.html)" nos permite visualizar cualquier tipo de imagen y nos brinda acceso a el rectángulo UV. Este rectángulo representa las coordenadas de la textura y podemos modificarlo mediante código para dar la sensación o la ilusión de que la imagen está en movimiento sin tener que moverla.
-
-A continuación, procederemos a calcular la cantidad de rotación en cada frame, basándonos en las decisiones del desarrollador. Después calcularemos la cantidad de desplazamiento en función de la velocidad especificada por el desarrollador. Para realizar este cálculo en cada frame, utilizaremos la función [Time.deltaTime](https://docs.unity3d.com/es/530/ScriptReference/Time-deltaTime.html), que representa "el tiempo en segundos que tardó en completarse el último frame".
-
-La dirección del desplazamiento también será determinada por el desarrollador. En caso de que se desee que, independientemente de la rotación, la imagen se desplace en una dirección única, para ello contrarrestamos la rotación actual girando en dirección opuesta el vector de movimiento calculado.
+…
