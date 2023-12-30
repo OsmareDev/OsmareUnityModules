@@ -1,32 +1,70 @@
-# Pathfinding
-![a2](https://github.com/OsmareDev/OsmareUnityModules/assets/50903643/944dd90a-c61e-4a05-aab9-d3e19ae7c484)
+# Pathfinding 2D
+![a8_1](https://github.com/OsmareDev/OsmareUnityModules/assets/50903643/b38c0b20-a7cc-4c0e-9f76-3e5d91ed74d4)
+![a8_2](https://github.com/OsmareDev/OsmareUnityModules/assets/50903643/307755ed-8652-4a47-9c11-c1917518439b)
 
 # English
 
 <table>
    <tr><td><b>Problem</b></td></tr>
-   <tr><td>In Unity, scene switching functionality is provided, but performing this transition does not hide the object loading of the next scene, resulting in a direct display of the object loading , similar to a theatrical performance without a curtain.</td></tr>
+   <tr><td>When performing pathfinding Unity only includes options for 3D</td></tr>
    <tr><td><b>Solution</b></td></tr>
-   <tr><td>To solve this problem we will activate a canvas and by updating a loading bar we will give the player information about the progress.</td></tr>
+   <tr><td>We make our own pathfinding system, with visual editing from the editor to make it more accessible</td></tr>
 </table>
 
-To keep the module present in the scene consistently, it will be implemented using the **Singleton** design pattern. This module will ensure that it is unique to the scene and will be accessible from anywhere in the code.
+To do this we will divide the work into 3 parts
 
-The module will receive as a parameter the canvas that you want to use as the loading screen, as well as the canvases that should be deactivated if necessary. The module will then start loading asynchronously and update the loading bar, which has been implemented using the **BarController** module.
+- **Grid and nodes**
+<br>
+We will create a system of nodes to divide the terrain into a grid, which can be manipulated from the editor. We will use this grid system to feed the A* algorithm, which will determine the best path from the current point to the target. The script will return a list of Vector3 points that represent the path between the managed points in the FindPath function of the script.
 
-Once the scene has fully loaded, the loading screen is disabled and the corresponding scene will be displayed.
+<br>
+
+To fill the grid, a collision detection system has been implemented for which the list of layers that represent the non-walkable squares must be entered.
+
+---
+- **Save system**
+<br>
+We will use the generic saving system provided in the Utils folder to save the grid information.
+
+---
+- **Editing from the editor**
+<br>
+From the editor you can manage the grid, its size and how many cells it has, the colors for its visual representation, the collision layers for automatic detection, the percentage of the cell that you want to check and the name of the grid. file that will be used to save the grid information.
+
+<br>
+
+Finally, the gizmos will be programmed in such a way that they are only shown when the object that contains the script is selected, this way it will not interfere with the development of the project. When you finish configuring the grid, press the editor button so that the script begins checking the cells.
 
 # Español
 
 <table>
   <tr><td><b>Problema</b></td></tr>
-  <tr><td>En Unity, se proporciona la funcionalidad de cambio de escenas, pero al realizar esta transición, no se oculta la carga de los objetos de la siguiente escena, lo que resulta en una visualización directa de la carga de los objetos, similar a una representación teatral sin telón.</td></tr>
+  <tr><td>A la hora de realizar un pathfinding Unity solo incorpora opciones para 3D</td></tr>
   <tr><td><b>Solución</b></td></tr>
-  <tr><td>Para solventar este problema activaremos un canvas y actualizando una barra de carga daremos información al jugador del progreso.</td></tr>
+  <tr><td>Hacemos nuestro propio sistema de pathfinding, con edición visual desde el editor para hacerlo más accesible</td></tr>
 </table>
 
-Para mantener el módulo presente en la escena de forma constante, se implementará utilizando el patrón de diseño **Singleton**. Este módulo se asegurará de ser único en la escena y estará accesible desde cualquier parte del código.
+Para ello dividiremos el trabajo en 3 partes
 
-El módulo recibirá como parámetro el canvas que se desea usar como pantalla de carga, así como los canvas que deben desactivarse si es necesario. A continuación, el módulo iniciará la carga de forma asíncrona y actualizará la barra de carga, la cual se ha implementado utilizando el módulo **BarController**.
+- **Grid y nodos**
+<br>
+Crearemos un sistema de nodos para dividir el terreno en una cuadrícula, la cual es manipulable desde el editor. Usaremos este sistema de cuadrícula para alimentar el algoritmo A*, el cual determinará el mejor camino desde el punto actual hasta el objetivo. El script devolverá una lista de puntos Vector3 que suponen el paso entre los puntos administrados en la función FindPath del script.
 
-Una vez que la escena se haya cargado por completo, se desactiva la pantalla de carga y se mostrará la escena correspondiente.
+<br>
+
+Para rellenar la cuadrícula se ha implementado un sistema de detección de colisiones para el cual se ha de poner la lista de las capas que representan las casillas no caminables.
+
+---
+- **Sistema de guardado**
+<br>
+Usaremos el sistema de guardado genérico proporcionado en la carpeta de Utils para guardar la información del grid.
+
+---
+- **Edición desde el editor**
+<br>
+Desde el editor se permite la administración del grid, el tamaño de éste y cuantas celdas posee, los colores para la representación visual del mismo, las capas de colisión para la detección automática, el porcentaje de la celda que se desea comprobar y el nombre del archivo que se usará para guardar la información del grid.
+
+<br>
+
+Por último se programaran los gizmos de tal manera que estos solo se muestran cuando el objeto que contiene el script es seleccionado, de esta manera no molestará en el desarrollo del proyecto. Al finalizar de configurar el grid se pulsa el botón del editor para que el script comience la comprobación de celdas.
+
