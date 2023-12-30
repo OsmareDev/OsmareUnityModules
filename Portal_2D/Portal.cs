@@ -22,6 +22,8 @@ public class Portal : MonoBehaviour
 
     [SerializeField] private LayerMask m_ignoreMask;
 
+    [SerializeField] private List<string> m_namesToNotDeactivate;
+
     private static TimedDictionary<Collider2D, GameObject> m_decoyList;
     private static int m_portalsCurrentlyActive = 0;
     private bool m_thisPortalIsAlive = false;
@@ -112,11 +114,15 @@ public class Portal : MonoBehaviour
 
     private void DeactivateAllComponents(GameObject go) {
         List<Type> nonDeleteableComponents = new List<Type>{
-            typeof(AimController2D),
             typeof(SpriteRenderer),
             typeof(RectTransform),
             typeof(Transform)
+            // Dont Add Colliders Here
         };
+
+        m_namesToNotDeactivate.ForEach( name => {
+            nonDeleteableComponents.Add(Type.GetType(name));
+        } );
 
         List<Component> allComponents = new List<Component>(go.GetComponents<Component>());
         allComponents.Where( comp => !nonDeleteableComponents.Contains(comp.GetType()) ).ToList().ForEach( comp => Destroy(comp) );
@@ -181,7 +187,7 @@ public class Portal : MonoBehaviour
 [CustomEditor(typeof(Portal))]
 class PortalEditor : Editor {
 
-    SerializedProperty m_nextPortal, m_semiEjeVertical, m_semiEjeHorizontal, m_ignoreMask, m_timeThreshold;
+    SerializedProperty m_nextPortal, m_semiEjeVertical, m_semiEjeHorizontal, m_ignoreMask, m_timeThreshold, m_namesToNotDeactivate;
 
     private void OnEnable() {
         m_nextPortal = serializedObject.FindProperty("m_nextPortal");
@@ -189,6 +195,7 @@ class PortalEditor : Editor {
         m_semiEjeVertical = serializedObject.FindProperty("m_semiEjeVertical");
         m_ignoreMask = serializedObject.FindProperty("m_ignoreMask");
         m_timeThreshold = serializedObject.FindProperty("m_timeThreshold");
+        m_namesToNotDeactivate = serializedObject.FindProperty("m_namesToNotDeactivate");
 
         Portal script = (Portal)target;
         serializedObject.Update();
@@ -217,6 +224,7 @@ class PortalEditor : Editor {
         if (m_semiEjeVertical.floatValue != script.transform.localScale.y) m_semiEjeVertical.floatValue = script.transform.localScale.y;
 
         EditorGUILayout.PropertyField(m_ignoreMask, true);
+        EditorGUILayout.PropertyField(m_namesToNotDeactivate, true);
 
         //Portal.timeThreshold = EditorGUILayout.FloatField("Time threshold", Portal.timeThreshold);
         //if (Portal.timeThreshold < 0.01f) Portal.timeThreshold = 0.01f;
