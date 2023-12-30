@@ -117,7 +117,7 @@ public class GridPath : MonoBehaviour
         HashSet<Node> closedSet = new HashSet<Node>();
 
         openSet.Add(startNode);
-        int cont = 0;
+        // int cont = 0;
 
         while (openSet.Count > 0)
         {
