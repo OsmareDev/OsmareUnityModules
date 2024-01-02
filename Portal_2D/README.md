@@ -25,4 +25,4 @@ En caso de estar completamente dentro del portal se creará una copia en el port
 
 <br>
 
-Cuando se atraviese el portal hasta estar más dentro que fuera el portal moverá al jugador al portal contrario. Se pueden incluir a través de una lista los nombres de scripts que no se desea que se borren de las copias, esto por ejemplo puede servir para que estas emiten un poco mejor a sus originales. Por ultimo tambien se puede decidir que capas puede ignorar el portal para que este no interactuar con dichas capas y estas no puedan atravesar el portal.
+Cuando se atraviese el portal hasta estar más dentro que fuera el portal moverá al jugador al portal contrario. Se pueden incluir a través de una lista los nombres de scripts que no se desea que se borren de las copias, esto por ejemplo puede servir para que estas emiten un poco mejor a sus originales. Por último también se puede decidir qué capas puede ignorar el portal para que este no interactúe con dichas capas y estas no puedan atravesar el portal.
