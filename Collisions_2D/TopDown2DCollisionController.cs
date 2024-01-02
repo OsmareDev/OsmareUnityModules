@@ -25,6 +25,10 @@ public class TopDown2DCollisionController : MonoBehaviour, IMoveable
     public void Start() => LoadCollisionDetection();
 
     private Vector2 m_origDirection;
+
+    public bool isGrounded => throw new NotImplementedException();
+    public CollisionFlags collisionFlags => throw new NotImplementedException();
+
     public void Move(Vector3 v) {
         m_origDirection = v.normalized;
         Vector2 finalMovement = CheckCollisions(v);

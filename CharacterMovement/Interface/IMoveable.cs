@@ -5,4 +5,7 @@ using UnityEngine;
 public interface IMoveable
 {
     public void Move(Vector3 v);
+
+    public bool isGrounded {get;}
+    public CollisionFlags collisionFlags {get;}
 }

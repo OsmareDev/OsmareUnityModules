@@ -26,6 +26,9 @@ public class General2DCollisionController : MonoBehaviour, IMoveable
     [field: SerializeField] public bool TakeIntoAccountGravity { get; set; } = false;
     [field: SerializeField] public Transform BodyAxis { get; set; }
 
+    public bool isGrounded {get;}
+    public CollisionFlags collisionFlags {get;}
+
     public void Start() => LoadCollisionDetection();
 
     private Vector2 m_origDirection;
