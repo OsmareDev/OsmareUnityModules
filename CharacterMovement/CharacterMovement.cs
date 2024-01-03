@@ -104,7 +104,7 @@ public class CharacterMovement : MonoBehaviour
 
     private void HorizontalSpeed() {
         if (m_moveDirection != Vector3.zero) {
-            // si tienen signos opuestos se usa brake en vez de acceleration
+            // If they have opposite signs, brake is used instead of acceleration
             if (Vector3.Dot(m_moveDirection, new Vector3(m_currentSpeed.x, 0, m_currentSpeed.z)) < 0) m_currentHorizontal += m_moveDirection * m_braking * ((m_fixedUpdate) ? Time.fixedDeltaTime : Time.deltaTime);
             else m_currentHorizontal += m_moveDirection * m_acceleration * ((m_fixedUpdate) ? Time.fixedDeltaTime : Time.deltaTime);
 
@@ -150,7 +150,7 @@ public class CharacterMovement : MonoBehaviour
             m_lastTimeGrounded = 0;
         }
 
-        // si choca contra el techo pierde toda velocidad
+        // If it hits the roof it loses all speed
         if ((EditorHelpers.CallProperty<CollisionFlags>(m_cc, "collisionFlags") & CollisionFlags.Above) != 0) {
             if (m_currentSpeed.y > 0) m_currentSpeed.y = 0;
         }
@@ -173,7 +173,6 @@ public class CharacterMovement : MonoBehaviour
         finalMove += cameraForward * m_currentSpeed.z * ((m_fixedUpdate) ? Time.fixedDeltaTime : Time.deltaTime);
         finalMove += cameraUp * m_currentSpeed.y * ((m_fixedUpdate) ? Time.fixedDeltaTime : Time.deltaTime);
 
-        //((dynamic)m_cc).Move(finalMove);
         EditorHelpers.CallMethod(m_cc, "Move", finalMove);
 
         // Debug.Log(m_cc.isGrounded);
@@ -254,8 +253,6 @@ class CharacterMovementEditor : Editor {
             EditorGUILayout.PropertyField(m_jumpInput, new GUIContent("Jump Input"), true);
             EditorGUILayout.PropertyField(m_moveInput, new GUIContent("Move Input"), true);
         }
-
-        // Detectar que m_cc pertence a IMovable o a CharacterController
 
         EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
         // || Components Settings ||
