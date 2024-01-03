@@ -1,47 +1,36 @@
 # Character Movement
-![a1_1](https://github.com/OsmareDev/OsmareUnityModules/assets/50903643/e6dc7063-684e-4bbb-87b3-3731492401a5)
----
-![a1_2](https://github.com/OsmareDev/OsmareUnityModules/assets/50903643/2b2e2e39-d2da-41f7-b6d5-80494f762960)
----
-![a1_3](https://github.com/OsmareDev/OsmareUnityModules/assets/50903643/098552b9-071b-4544-8a7e-eb0debddcea9)
----
-![a1_4](https://github.com/OsmareDev/OsmareUnityModules/assets/50903643/00fa4c28-0461-47e0-9292-5b9d74f245bf)
----
+![a_10_1](https://github.com/OsmareDev/OsmareUnityModules/assets/50903643/77cd6e92-79d9-4e46-b31c-046196e457d4)
+
 
 # English
 
-<table>
-   <tr><td><b>Problem</b></td></tr>
-   <tr><td>When it comes to animating backgrounds and images, a fundamental task is to automatically pan the image to add expression or generate movement in the background. Unity does not provide a direct way to perform such an action.</td></tr>
-   <tr><td><b>Solution</b></td></tr>
-   <tr><td>To solve this problem, this module will be created. This module will use one of Unity's image components to animate it in different ways.</td></tr>
-</table>
+Creating a movement system is one of the most complicated things when creating a video game. Many games base their main mechanics on this and that is why it should feel like one of the most fun or special things when playing.
 
-Unity provides us with two image modules:
+<br>
 
-1. The component "[Image](https://docs.unity3d.com/es/2018.4/ScriptReference/UI.Image.html)", used to display a sprite in the user interface, has different variables, in In no case does it allow us to alter the texture.
+In order to develop functional movement in both 2 dimensions and 3 dimensions, it is necessary to establish a reference system. In many cases, the camera is used to provide greater intuitiveness of the controls. Once we have established the reference system, it is necessary to determine the directions to take into account, which is up to the developer. In both cases, the vertical axis will be considered; However, in 2D environments, only one of the horizontal axes will be taken into account.
 
-2. The "[Raw Image](https://docs.unity3d.com/es/2018.4/Manual/script-RawImage.html)" component allows us to view any type of image and gives us access to the UV rectangle. This rectangle represents the coordinates of the texture and we can modify it through code to give the sensation or illusion that the image is moving without having to move it.
+<br>
 
-Next, we will proceed to calculate the amount of rotation in each frame, based on the developer's decisions. We will then calculate the amount of displacement based on the speed specified by the developer. To perform this calculation in each frame, we will use the function [Time.deltaTime](https://docs.unity3d.com/es/530/ScriptReference/Time-deltaTime.html), which represents "the time in seconds it took to the last frame is completed".
+In movement systems, methods are necessary to make the player feel like they are doing things right. To do this, mechanics such as coyote time (having a margin of error when jumping from platforms) and jump buffering (saving the jump input) are implemented. so you don't have to do it perfectly when jumping from the ground)
 
-The direction of scrolling will also be determined by the developer. If it is desired that, independently of the rotation, the image moves in a single direction, to do so we counteract the current rotation by rotating the calculated motion vector in the opposite direction.
+<br>
+
+We divide the horizontal speed from the vertical speed and give different braking methods. As well as a way to stop the jump by stopping pressing the jump button.
 
 # Español
 
-<table>
-  <tr><td><b>Problema</b></td></tr>
-  <tr><td>Cuando se trata de animar fondos e imágenes, una tarea fundamental es realizar un desplazamiento automático de la imagen para agregar expresión o generar movimiento en el fondo. Unity no provee una forma directa de realizar dicha acción.</td></tr>
-  <tr><td><b>Solución</b></td></tr>
-  <tr><td>Para solventar este problema se creará este módulo. Este módulo utilizará uno de los componentes de imagen de Unity para animarlo de distintas maneras.</td></tr>
-</table>
+La realización de un sistema de movimiento es de las cosas más complicadas a la hora de crear un videojuego, muchos juegos basan su mecánica principal en esto y por ello debe sentirse de las cosas más divertidas o especiales a la hora de jugar. 
 
-Unity nos proporciona dos módulos de imagen:
+<br>
 
-1. El componente "[Image](https://docs.unity3d.com/es/2018.4/ScriptReference/UI.Image.html)", utilizado para mostrar un sprite en la interfaz de usuario, cuenta con distintas variables, en ningún caso nos permite alterar la textura.
+Para poder desarrollar un movimiento funcional en tanto 2 dimensiones como 3 dimensiones, es necesario establecer un sistema de referencia. En muchos casos, se emplea la cámara para proporcionar una mayor intuición de los controles. Una vez que hemos establecido el sistema de referencia, es necesario determinar las direcciones a tener en cuenta, lo cual queda a elección del desarrollador. En ambos casos, se considerará el eje vertical; sin embargo, en entornos 2D, sólo se tendrá en cuenta uno de los ejes horizontales.
 
-2. El componente "[Raw Image](https://docs.unity3d.com/es/2018.4/Manual/script-RawImage.html)" nos permite visualizar cualquier tipo de imagen y nos brinda acceso a el rectángulo UV. Este rectángulo representa las coordenadas de la textura y podemos modificarlo mediante código para dar la sensación o la ilusión de que la imagen está en movimiento sin tener que moverla.
+<br>
 
-A continuación, procederemos a calcular la cantidad de rotación en cada frame, basándonos en las decisiones del desarrollador. Después calcularemos la cantidad de desplazamiento en función de la velocidad especificada por el desarrollador. Para realizar este cálculo en cada frame, utilizaremos la función [Time.deltaTime](https://docs.unity3d.com/es/530/ScriptReference/Time-deltaTime.html), que representa "el tiempo en segundos que tardó en completarse el último frame".
+En los sistemas de movimiento es necesario métodos para hacer que el jugador sienta que hace las cosas bien, para ello se implementan mecánicas como el coyote time (tener un margen de error al saltar de plataformas) y el jump buffering (guardar el input de salto para no tener que hacerlo perfecto a la hora de saltar desde el suelo)
 
-La dirección del desplazamiento también será determinada por el desarrollador. En caso de que se desee que, independientemente de la rotación, la imagen se desplace en una dirección única, para ello contrarrestamos la rotación actual girando en dirección opuesta el vector de movimiento calculado.
+<br>
+
+Dividimos la velocidad horizontal de la velocidad vertical y damos distintos métodos de frenada. Así como un modo de poder parar el salto al dejar de pulsar el botón de salto.
+
