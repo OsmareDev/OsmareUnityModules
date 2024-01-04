@@ -1,28 +1,51 @@
 # Collectibles
-![a_10_1](https://github.com/OsmareDev/OsmareUnityModules/assets/50903643/77cd6e92-79d9-4e46-b31c-046196e457d4)
-
+![a_11_1](https://github.com/OsmareDev/OsmareUnityModules/assets/50903643/cf2e7428-dba3-4e1e-b7dc-c5dabccf78f8)
+![a_11_2](https://github.com/OsmareDev/OsmareUnityModules/assets/50903643/609955a2-9e25-402c-b843-8aadd59b1ae4)
 
 # English
 
-**The script is compatible with any other script that implements the attached interface or any other script that contains that base information, so it will also work with the Unity Character controller!**
+Collectible elements play a fundamental role in numerous video games, providing various functionalities and benefits to the player. These items are designed to provide new abilities, increase a counter that represents in-game money, or simply unlock additional in-game content.
 
-Creating a movement system is one of the most complicated things when creating a video game. Many games base their main mechanics on this and that is why it should feel like one of the most fun or special things when playing.
+<table>
+    <tr><td><b>Problem</b></td></tr>
+    <tr><td>Unity lacks an item collection system, leaving the implementation to developers.</td></tr>
+    <tr><td><b>Solution</b></td></tr>
+    <tr><td>We will create an ICollectible interface that allows turning any object into a collectible and a CollectibleCatcherController script that interacts with these collectibles.</td></tr>
+</table>
 
-In order to develop functional movement in both 2 dimensions and 3 dimensions, it is necessary to establish a reference system. In many cases, the camera is used to provide greater intuitiveness of the controls. Once we have established the reference system, it is necessary to determine the directions to take into account, which is up to the developer. In both cases, the vertical axis will be considered; However, in 2D environments, only one of the horizontal axes will be taken into account.
+The ICollectible interface will be implemented with the GetCollected function, which will allow us to use this function from the collector controller if the interface is detected.
 
-In movement systems, methods are necessary to make the player feel like they are doing things right. To do this, mechanics such as coyote time (having a margin of error when jumping from platforms) and jump buffering (saving the jump input) are implemented. so you don't have to do it perfectly when jumping from the ground)
+Within the CollectibleCatcherController, we will use two functions provided by Unity to manage collisions and thus determine when we step over an element.
 
-We divide the horizontal speed from the vertical speed and give different braking methods. As well as a way to stop the jump by stopping pressing the jump button.
+- [OnTriggerEnter](https://docs.unity3d.com/ScriptReference/Collider.OnTriggerEnter.html) will allow us to detect these collisions with a [RigidBody](https://docs.unity3d.com/es/2019.4/Manual/ class-Rigidbody.html)
+- [OnControllerColliderHit](https://docs.unity3d.com/ScriptReference/MonoBehaviour.OnControllerColliderHit.html) will allow us to detect collisions with a [CharacterController](https://docs.unity3d.com/ScriptReference/CharacterController.html)
+
+In both functions, we will use [TryGetComponent](https://docs.unity3d.com/ScriptReference/Component.TryGetComponent.html) instead of [GetComponent](https://docs.unity3d.com/ScriptReference/GameObject.GetComponent. html), since the first uses memory only if the component exists.
+
+We will also do an extra implementation in case it is decided not to use any of the detections provided by Unity. Which will be loaded through a delegate to maintain efficiency and avoid checking each frame.
+
+With this we will provide an example implementation of the ICollectible interface, where once the function is called, we will calculate a bezier curve to transport the collectible to the player and once we reach it, add a point to a counter.
 
 # Español
 
-**¡El script es compatible con cualquier otro script que implemente la interfaz adjuntada o cualquier otro script que contenga esa información base, por lo que funcionará también con el Character controller de unity!**
+Los elementos coleccionables desempeñan un papel fundamental en numerosos videojuegos, aportando diversas funcionalidades y beneficios al jugador. Estos elementos están diseñados con el objetivo de brindar nuevas habilidades, incrementar un contador que representa el dinero en el juego o, simplemente, desbloquear contenido adicional del juego.
 
-La realización de un sistema de movimiento es de las cosas más complicadas a la hora de crear un videojuego, muchos juegos basan su mecánica principal en esto y por ello debe sentirse de las cosas más divertidas o especiales a la hora de jugar. 
+<table>
+   <tr><td><b>Problem</b></td></tr>
+   <tr><td>Unity carece de un sistema de recogida de items, dejando a los desarrolladores la implementación.</td></tr>
+   <tr><td><b>Solution</b></td></tr>
+   <tr><td>Crearemos una interfaz ICollectible que permite convertir cualquier objeto en un coleccionable y un script CollectibleCatcherController que interactúa con estos coleccionables.</td></tr>
+</table>
 
-Para poder desarrollar un movimiento funcional en tanto 2 dimensiones como 3 dimensiones, es necesario establecer un sistema de referencia. En muchos casos, se emplea la cámara para proporcionar una mayor intuición de los controles. Una vez que hemos establecido el sistema de referencia, es necesario determinar las direcciones a tener en cuenta, lo cual queda a elección del desarrollador. En ambos casos, se considerará el eje vertical; sin embargo, en entornos 2D, sólo se tendrá en cuenta uno de los ejes horizontales.
+La interfaz ICollectible se implementará con la función GetCollected, la cual servirá para que desde el controlador del recolector podamos hacer uso de esta función si se detecta la interfaz.
 
-En los sistemas de movimiento es necesario métodos para hacer que el jugador sienta que hace las cosas bien, para ello se implementan mecánicas como el coyote time (tener un margen de error al saltar de plataformas) y el jump buffering (guardar el input de salto para no tener que hacerlo perfecto a la hora de saltar desde el suelo)
+Dentro del CollectibleCatcherController, utilizaremos dos funciones proporcionadas por Unity para gestionar las colisiones y de esta manera determinar cuándo pasamos por encima de un elemento.
 
-Dividimos la velocidad horizontal de la velocidad vertical y damos distintos métodos de frenada. Así como un modo de poder parar el salto al dejar de pulsar el botón de salto.
+- [OnTriggerEnter](https://docs.unity3d.com/ScriptReference/Collider.OnTriggerEnter.html) nos permitirá detectar estas colisiones con un [RigidBody](https://docs.unity3d.com/es/2019.4/Manual/class-Rigidbody.html)
+- [OnControllerColliderHit](https://docs.unity3d.com/ScriptReference/MonoBehaviour.OnControllerColliderHit.html) nos permitirá detectar las colisiones con un [CharacterController](https://docs.unity3d.com/ScriptReference/CharacterController.html)
 
+En ambas funciones, emplearemos [TryGetComponent](https://docs.unity3d.com/ScriptReference/Component.TryGetComponent.html) en lugar de [GetComponent](https://docs.unity3d.com/ScriptReference/GameObject.GetComponent.html), ya que la primera utiliza memoria sólo si el componente existe.
+
+También haremos una implementación extra en caso de que se decida no usar ninguna de las detecciones proporcionadas por Unity. La cual se cargará a través de un delegado para mantener la eficiencia y evitarnos comprobaciones cada frame.
+
+Con esto proporcionaremos un ejemplo de implementación de la interfaz ICollectible, donde una vez llamado a la función, calcularemos un curva de bézier para transportar el coleccionable hasta el jugador y una vez lleguemos a el sumar un punto a un contador.
