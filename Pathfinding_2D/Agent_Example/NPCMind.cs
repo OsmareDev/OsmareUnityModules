@@ -36,9 +36,7 @@ public class NPCMind : MonoBehaviour
     }
 
     void ActualizePath() {
-        Debug.Log("se llama");
         if (m_lastTimeActualization < Time.time) {
-        Debug.Log("entra");
             m_lastTimeActualization = Time.time + m_timeForActualizePath;
 
             path = m_path.FindPath(transform.position, m_target.position);
@@ -47,6 +45,8 @@ public class NPCMind : MonoBehaviour
     }
 
     void OnDrawGizmos() {
+        if (!Application.isPlaying) return;
+
         path = m_path.FindPath(transform.position, m_target.position);
 
         

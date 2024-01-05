@@ -26,7 +26,7 @@ public class GridPath : MonoBehaviour
     [SerializeField] private string m_docName;
 
     #region UnityFunctions
-    public void Start() {
+    public void Awake() {
         PopulateArray();
     }
 

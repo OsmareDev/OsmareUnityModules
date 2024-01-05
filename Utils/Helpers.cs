@@ -1,4 +1,5 @@
 using System;
+using System.Reflection;
 using UnityEngine;
 
 public class Helpers
@@ -31,5 +32,14 @@ public class Helpers
         Vector3 bc_cd = QuadraticLerp(b, c, d, t);
 
         return Vector3.Lerp(ab_bc, bc_cd, t);
+    }
+
+    public static Func<T1, T2, TResult> RetrieveFunc<T1, T2, TResult>(System.Object obj, string functionName) {
+        MethodInfo method = obj.GetType().GetMethod(functionName);
+        if (method != null) {
+            return (Func<T1, T2, TResult>)Delegate.CreateDelegate(typeof(Func<T1, T2, TResult>), obj, method);
+        }
+
+        return default;
     }
 }
