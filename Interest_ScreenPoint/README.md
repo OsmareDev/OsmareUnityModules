@@ -1,47 +1,46 @@
 # Interest ScreenPoint
-![a1_1](https://github.com/OsmareDev/OsmareUnityModules/assets/50903643/e6dc7063-684e-4bbb-87b3-3731492401a5)
----
-![a1_2](https://github.com/OsmareDev/OsmareUnityModules/assets/50903643/2b2e2e39-d2da-41f7-b6d5-80494f762960)
----
-![a1_3](https://github.com/OsmareDev/OsmareUnityModules/assets/50903643/098552b9-071b-4544-8a7e-eb0debddcea9)
----
-![a1_4](https://github.com/OsmareDev/OsmareUnityModules/assets/50903643/00fa4c28-0461-47e0-9292-5b9d74f245bf)
----
+![a_13_1](https://github.com/OsmareDev/OsmareUnityModules/assets/50903643/8dbf9134-9965-4dac-91b6-f93535719cb1)
+![a_13_2](https://github.com/OsmareDev/OsmareUnityModules/assets/50903643/399aa2ed-d84a-4418-a819-e8852019c312)
+
 
 # English
 
+In order to provide the player with visual information about points of interest, we will implement a manager that will display in the interface the closest point of interest within a radius defined by the developer.
+
 <table>
    <tr><td><b>Problem</b></td></tr>
-   <tr><td>When it comes to animating backgrounds and images, a fundamental task is to automatically pan the image to add expression or generate movement in the background. Unity does not provide a direct way to perform such an action.</td></tr>
+   <tr><td>Since the player's camera will be constantly moving, the location of the mark on the screen will quickly become unusable.</td></tr>
    <tr><td><b>Solution</b></td></tr>
-   <tr><td>To solve this problem, this module will be created. This module will use one of Unity's image components to animate it in different ways.</td></tr>
+   <tr><td>We will use an asynchronous function that updates the position of the object on the screen</td></tr>
 </table>
 
-Unity provides us with two image modules:
+First we will implement an asynchronous function instead of using the [Update](https://docs.unity3d.com/ScriptReference/MonoBehaviour.Update.html) function. This will allow us to avoid unnecessary consumption of resources when we do not want to show the marks on the screen.
 
-1. The component "[Image](https://docs.unity3d.com/es/2018.4/ScriptReference/UI.Image.html)", used to display a sprite in the user interface, has different variables, in In no case does it allow us to alter the texture.
+We will obtain a list of the points of interest present in the scene and, using the library [System.Linq](https://learn.microsoft.com/es-es/dotnet/api/system.linq?view=net-7.0 ), we will determine if there are any targets within the designated radius. If there is at least one, we will select the closest point of interest.
 
-2. The "[Raw Image](https://docs.unity3d.com/es/2018.4/Manual/script-RawImage.html)" component allows us to view any type of image and gives us access to the UV rectangle. This rectangle represents the coordinates of the texture and we can modify it through code to give the sensation or illusion that the image is moving without having to move it.
+Now, we will check if there is any obstacle between the viewer and the point of interest using a [Raycast](https://docs.unity3d.com/ScriptReference/Physics.Raycast.html). If the [Raycast](https://docs.unity3d.com/ScriptReference/Physics.Raycast.html) collides with an object, we will verify if it is the intended target. If so, we will try to obtain the IInteractable interface to allow the player to interact with said object.
 
-Next, we will proceed to calculate the amount of rotation in each frame, based on the developer's decisions. We will then calculate the amount of displacement based on the speed specified by the developer. To perform this calculation in each frame, we will use the function [Time.deltaTime](https://docs.unity3d.com/es/530/ScriptReference/Time-deltaTime.html), which represents "the time in seconds it took to the last frame is completed".
+Now that we've confirmed that this is the correct element, we'll use the [WorldToScreenPoint](https://docs.unity3d.com/ScriptReference/Camera.WorldToScreenPoint.html) function to convert the world point to canvas space, and then use the function [RectangleContainsScreenPoint](https://docs.unity3d.com/ScriptReference/RectTransformUtility.RectangleContainsScreenPoint.html) to determine if said point is within the canvas area. If it is inside the canvas, we will set the calculated position for the mark.
 
-The direction of scrolling will also be determined by the developer. If it is desired that, independently of the rotation, the image moves in a single direction, to do so we counteract the current rotation by rotating the calculated motion vector in the opposite direction.
+Finally, we will implement a function that will call the interaction function if the point of interest is visible on the screen, the asynchronous function is active, and a reference to an object that implements the IInteractable interface has been stored.
 
 # Español
 
+Con el fin de proporcionar al jugador información visual sobre los puntos de interés, implementaremos un gestor que se encargará de mostrar en la interfaz el punto de interés más cercano dentro de un radio definido por el desarrollador.
+
 <table>
   <tr><td><b>Problema</b></td></tr>
-  <tr><td>Cuando se trata de animar fondos e imágenes, una tarea fundamental es realizar un desplazamiento automático de la imagen para agregar expresión o generar movimiento en el fondo. Unity no provee una forma directa de realizar dicha acción.</td></tr>
+  <tr><td>Dado que la cámara del jugador se encontrará en constante movimiento, la ubicación de la marca en la pantalla se verá inutilizada rápidamente.</td></tr>
   <tr><td><b>Solución</b></td></tr>
-  <tr><td>Para solventar este problema se creará este módulo. Este módulo utilizará uno de los componentes de imagen de Unity para animarlo de distintas maneras.</td></tr>
+  <tr><td>Haremos uso de una función asíncrona que actualiza la posición del objeto en pantalla</td></tr>
 </table>
 
-Unity nos proporciona dos módulos de imagen:
+Primero implementaremos una función asincrónica en vez de usar la función [Update](https://docs.unity3d.com/ScriptReference/MonoBehaviour.Update.html). Esto nos permitirá evitar el consumo innecesario de recursos cuando no queramos mostrar las marcas en la pantalla.
 
-1. El componente "[Image](https://docs.unity3d.com/es/2018.4/ScriptReference/UI.Image.html)", utilizado para mostrar un sprite en la interfaz de usuario, cuenta con distintas variables, en ningún caso nos permite alterar la textura.
+Obtendremos una lista de los puntos de interés presentes en la escena y, utilizando la librería [System.Linq](https://learn.microsoft.com/es-es/dotnet/api/system.linq?view=net-7.0), determinaremos si existe algún objetivo dentro del radio designado. En caso de que exista uno como mínimo, seleccionaremos el punto de interés más cercano.
 
-2. El componente "[Raw Image](https://docs.unity3d.com/es/2018.4/Manual/script-RawImage.html)" nos permite visualizar cualquier tipo de imagen y nos brinda acceso a el rectángulo UV. Este rectángulo representa las coordenadas de la textura y podemos modificarlo mediante código para dar la sensación o la ilusión de que la imagen está en movimiento sin tener que moverla.
+Ahora, comprobaremos si existe algún obstáculo entre el visualizador y el punto de interés mediante un [Raycast](https://docs.unity3d.com/ScriptReference/Physics.Raycast.html). Si el [Raycast](https://docs.unity3d.com/ScriptReference/Physics.Raycast.html) colisiona con algún objeto, verificaremos si se trata del objetivo deseado. De ser así, intentaremos obtener la interfaz IInteractable para permitir que el jugador interactúe con dicho objeto.
 
-A continuación, procederemos a calcular la cantidad de rotación en cada frame, basándonos en las decisiones del desarrollador. Después calcularemos la cantidad de desplazamiento en función de la velocidad especificada por el desarrollador. Para realizar este cálculo en cada frame, utilizaremos la función [Time.deltaTime](https://docs.unity3d.com/es/530/ScriptReference/Time-deltaTime.html), que representa "el tiempo en segundos que tardó en completarse el último frame".
+Ahora que hemos confirmado que se trata del elemento correcto, utilizaremos la función [WorldToScreenPoint](https://docs.unity3d.com/ScriptReference/Camera.WorldToScreenPoint.html) para convertir el punto del mundo al espacio del canvas, y luego emplearemos la función [RectangleContainsScreenPoint](https://docs.unity3d.com/ScriptReference/RectTransformUtility.RectangleContainsScreenPoint.html) para determinar si dicho punto se encuentra dentro del área del canvas. Si está dentro del canvas, estableceremos la posición calculada para la marca.
 
-La dirección del desplazamiento también será determinada por el desarrollador. En caso de que se desee que, independientemente de la rotación, la imagen se desplace en una dirección única, para ello contrarrestamos la rotación actual girando en dirección opuesta el vector de movimiento calculado.
+Por último, implementaremos una función que llamará a la función de interacción si el punto de interés es visible en pantalla, la función asincrónica está activa y se ha almacenado una referencia a un objeto que implementa la interfaz IInteractable.
