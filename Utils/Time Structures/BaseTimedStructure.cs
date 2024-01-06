@@ -14,7 +14,9 @@ public abstract class BaseTimedStructure
         Application.quitting += StopSweep; // unity only
         while(m_sweepRunning) {
             m_sweepStrutureAction();
-            await Task.Delay((int)(secondsBetweenSweeps * 1000));
+
+            int delay = ((int)(secondsBetweenSweeps * 1000) <= 0) ? 1 : (int)(secondsBetweenSweeps * 1000);
+            await Task.Delay(delay);
         }
 
         //AppDomain.CurrentDomain.ProcessExit -= StopSweep; // This does not work in the editor

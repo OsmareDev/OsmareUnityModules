@@ -140,6 +140,7 @@ class PathControllerEditor : Editor {
         EditorGUILayout.PropertyField(m_from, new GUIContent("Origin Of The Path"), true);
         EditorGUILayout.PropertyField(m_to, new GUIContent("Destination Of The Path"), true);
         EditorGUILayout.PropertyField(m_updatePathEveryXSeconds, new GUIContent("Update Path Every X Seconds"), true);
+        if (m_updatePathEveryXSeconds.floatValue <= 0) m_updatePathEveryXSeconds.floatValue = float.MinValue;
 
         EditorGUILayout.PropertyField(m_dimension, new GUIContent("Dimensions"), true);
         EditorGUI.indentLevel++;
