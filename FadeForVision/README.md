@@ -1,47 +1,39 @@
-# AutoScroll Background
-![a1_1](https://github.com/OsmareDev/OsmareUnityModules/assets/50903643/e6dc7063-684e-4bbb-87b3-3731492401a5)
----
-![a1_2](https://github.com/OsmareDev/OsmareUnityModules/assets/50903643/2b2e2e39-d2da-41f7-b6d5-80494f762960)
----
-![a1_3](https://github.com/OsmareDev/OsmareUnityModules/assets/50903643/098552b9-071b-4544-8a7e-eb0debddcea9)
----
-![a1_4](https://github.com/OsmareDev/OsmareUnityModules/assets/50903643/00fa4c28-0461-47e0-9292-5b9d74f245bf)
----
+# Fade For Vision
+![a_14_1](https://github.com/OsmareDev/OsmareUnityModules/assets/50903643/a7fe68c5-c23e-4e48-99af-504cdc324e36)
+![a_14_2](https://github.com/OsmareDev/OsmareUnityModules/assets/50903643/a461deb6-4ff9-4ad4-95f1-4443e6d286fe)
 
 # English
 
+When addressing the possibility of allowing the player to see the character through walls, we will focus on handling the transparency of said walls.
+
 <table>
    <tr><td><b>Problem</b></td></tr>
-   <tr><td>When it comes to animating backgrounds and images, a fundamental task is to automatically pan the image to add expression or generate movement in the background. Unity does not provide a direct way to perform such an action.</td></tr>
+   <tr><td>Calculating the player's position with respect to the stage is quite expensive to do from a shader or a script alone.</td></tr>
    <tr><td><b>Solution</b></td></tr>
-   <tr><td>To solve this problem, this module will be created. This module will use one of Unity's image components to animate it in different ways.</td></tr>
+   <tr><td>Implement an interface in charge of managing the transparency of the object and a controller class that will notify said objects when they should disappear.</td></tr>
 </table>
 
-Unity provides us with two image modules:
+- XRayController
+This module will make use of a [RaycastAll](https://docs.unity3d.com/ScriptReference/Physics.RaycastAll.html) that starts from the Near plane of the camera, in order to avoid collisions with non-rendered objects. Additionally, each impacted object will be checked to see if it contains the FadeObject module, in which case it will be prompted to become transparent.
 
-1. The component "[Image](https://docs.unity3d.com/es/2018.4/ScriptReference/UI.Image.html)", used to display a sprite in the user interface, has different variables, in In no case does it allow us to alter the texture.
+- FadeObject, upon receiving the command to become transparent, will use an asynchronous function to perform the transition and remain translucent until the object is no longer between the player and the camera.
 
-2. The "[Raw Image](https://docs.unity3d.com/es/2018.4/Manual/script-RawImage.html)" component allows us to view any type of image and gives us access to the UV rectangle. This rectangle represents the coordinates of the texture and we can modify it through code to give the sensation or illusion that the image is moving without having to move it.
-
-Next, we will proceed to calculate the amount of rotation in each frame, based on the developer's decisions. We will then calculate the amount of displacement based on the speed specified by the developer. To perform this calculation in each frame, we will use the function [Time.deltaTime](https://docs.unity3d.com/es/530/ScriptReference/Time-deltaTime.html), which represents "the time in seconds it took to the last frame is completed".
-
-The direction of scrolling will also be determined by the developer. If it is desired that, independently of the rotation, the image moves in a single direction, to do so we counteract the current rotation by rotating the calculated motion vector in the opposite direction.
+- DitherShader is responsible for determining, based on the value of the transparency property, the number of pixels that must be discarded to achieve the sensation of transparency. This approach saves resources by avoiding unnecessary calculations on pixels, unlike the transparency process that requires additional calculations on each pixel.
 
 # Español
 
+Al abordar la posibilidad de permitir que el jugador vea al personaje a través de las paredes, nos enfocaremos en manejar la transparencia de dichas paredes.
+
 <table>
   <tr><td><b>Problema</b></td></tr>
-  <tr><td>Cuando se trata de animar fondos e imágenes, una tarea fundamental es realizar un desplazamiento automático de la imagen para agregar expresión o generar movimiento en el fondo. Unity no provee una forma directa de realizar dicha acción.</td></tr>
+  <tr><td>Realizar el cálculo de la posición del jugador con respecto al escenario es bastante costoso como para llevarlo a cabo desde un shader o un script en solitario.</td></tr>
   <tr><td><b>Solución</b></td></tr>
-  <tr><td>Para solventar este problema se creará este módulo. Este módulo utilizará uno de los componentes de imagen de Unity para animarlo de distintas maneras.</td></tr>
+  <tr><td>Implementar una interfaz encargada de gestionar la transparencia del objeto y una clase controladora que avisará a dichos objetos cuándo deben desaparecer.</td></tr>
 </table>
 
-Unity nos proporciona dos módulos de imagen:
+- XRayController
+Este módulo hará uso de un [RaycastAll](https://docs.unity3d.com/ScriptReference/Physics.RaycastAll.html) que parte desde el plano Near de la cámara, con el fin de evitar colisiones con objetos no renderizados. Además, se verificará si cada objeto impactado contiene el módulo FadeObject, en cuyo caso se le solicitará que se vuelva transparente.
 
-1. El componente "[Image](https://docs.unity3d.com/es/2018.4/ScriptReference/UI.Image.html)", utilizado para mostrar un sprite en la interfaz de usuario, cuenta con distintas variables, en ningún caso nos permite alterar la textura.
+- FadeObject, una vez recibida la orden de volverse transparente, utilizará una función asíncrona para llevar a cabo la transición y mantenerse translúcido hasta que el objeto ya no se encuentre entre el jugador y la cámara.
 
-2. El componente "[Raw Image](https://docs.unity3d.com/es/2018.4/Manual/script-RawImage.html)" nos permite visualizar cualquier tipo de imagen y nos brinda acceso a el rectángulo UV. Este rectángulo representa las coordenadas de la textura y podemos modificarlo mediante código para dar la sensación o la ilusión de que la imagen está en movimiento sin tener que moverla.
-
-A continuación, procederemos a calcular la cantidad de rotación en cada frame, basándonos en las decisiones del desarrollador. Después calcularemos la cantidad de desplazamiento en función de la velocidad especificada por el desarrollador. Para realizar este cálculo en cada frame, utilizaremos la función [Time.deltaTime](https://docs.unity3d.com/es/530/ScriptReference/Time-deltaTime.html), que representa "el tiempo en segundos que tardó en completarse el último frame".
-
-La dirección del desplazamiento también será determinada por el desarrollador. En caso de que se desee que, independientemente de la rotación, la imagen se desplace en una dirección única, para ello contrarrestamos la rotación actual girando en dirección opuesta el vector de movimiento calculado.
+- DitherShader se encarga de determinar, en base al valor de la propiedad de transparencia, la cantidad de píxeles que deben ser descartados para lograr la sensación de transparencia. Este enfoque permite ahorrar recursos al evitar cálculos en los píxeles innecesarios, a diferencia del proceso de transparencia que requiere cálculos adicionales en cada píxel.
